@@ -8,6 +8,7 @@ UE5/Intermediate/
 UE5/Saved/
 UE5/DerivedDataCache/
 UE5/Build/
+UE5/Packaged/
 UE5/.vs/
 UE5/.vscode/
 UE5/CMakeLists.txt
