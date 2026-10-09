@@ -1,0 +1,47 @@
+# ===== UE5 引擎目录（50GB+，不提交）=====
+UE5/UE_5.8/
+UE5/UE_5.8.1/
+
+# ===== UE5 构建产物 =====
+UE5/Binaries/
+UE5/Intermediate/
+UE5/Saved/
+UE5/DerivedDataCache/
+UE5/Build/
+UE5/.vs/
+UE5/.vscode/
+UE5/CMakeLists.txt
+UE5/Makefile
+UE5/UE5.sln
+UE5/UE5.vcxproj
+UE5/UE5.vcxproj.filters
+UE5/UE5.vcxproj.user
+
+# ===== 内容目录中的构建缓存 =====
+UE5/Content/**/Build/
+UE5/Content/**/Metadata/
+
+# ===== 过程文件中的临时截图 =====
+过程文件/*.png
+过程文件/status*.png
+过程文件/download_error.png
+过程文件/editor_status.png
+
+# ===== 系统文件 =====
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# ===== 日志和临时文件 =====
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+
+# ===== 压缩包 =====
+*.zip
+*.rar
+*.7z
