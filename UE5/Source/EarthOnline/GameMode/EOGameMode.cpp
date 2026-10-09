@@ -7,7 +7,7 @@ AEOGameMode::AEOGameMode()
 {
     MaxPlayers = 32;
     GameName = TEXT("地球Online");
-    BetaVersion = TEXT("0.1.0 Beta");
+    BetaVersion = TEXT("0.1.8 Beta");
 
     PlayerControllerClass = AEOPlayerController::StaticClass();
     DefaultPawnClass = AEOBaseCharacter::StaticClass();

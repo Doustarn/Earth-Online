@@ -6,6 +6,7 @@
 
 class UEOMainMenuWidget;
 class UEOHUDWidget;
+class UEOKeyInputWidget;
 
 UCLASS()
 class EARTHONLINE_API AEOHUD : public AHUD
@@ -33,22 +34,28 @@ public:
     UFUNCTION(BlueprintCallable, Category = "UI")
     void ShowNotification(const FString& Message);
 
+    // 显示密钥输入
+    UFUNCTION(BlueprintCallable, Category = "UI")
+    void ShowKeyInput();
+
 protected:
-    // 主菜单Widget类
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<UEOMainMenuWidget> MainMenuWidgetClass;
 
-    // 游戏HUD Widget类
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<UEOHUDWidget> GameHUDWidgetClass;
 
-    // 主菜单实例
+    UPROPERTY(EditDefaultsOnly, Category = "UI")
+    TSubclassOf<UEOKeyInputWidget> KeyInputWidgetClass;
+
     UPROPERTY()
     UEOMainMenuWidget* MainMenuWidget;
 
-    // 游戏HUD实例
     UPROPERTY()
     UEOHUDWidget* GameHUDWidget;
+
+    UPROPERTY()
+    UEOKeyInputWidget* KeyInputWidget;
 
     bool bMenuVisible;
 };

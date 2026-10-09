@@ -15,7 +15,7 @@ bool UEOMainMenuWidget::Initialize()
 
     if (VersionText)
     {
-        VersionText->SetText(FText::FromString(TEXT("地球Online v0.1.0 Beta 内测版")));
+        VersionText->SetText(FText::FromString(TEXT("地球Online v0.1.8 Beta 内测版")));
     }
 
     return true;
