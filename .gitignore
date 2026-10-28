@@ -46,3 +46,6 @@ $RECYCLE.BIN/
 *.zip
 *.rar
 *.7z
+
+# 本地开发日志，不推送仓库
+开发日志.txt
