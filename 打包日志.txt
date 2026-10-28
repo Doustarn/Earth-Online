@@ -1,0 +1,31 @@
+﻿Running AutomationTool...
+Using bundled DotNet SDK version: 10.0 win-x64
+Starting AutomationTool...
+Parsing command line: BuildCookRun -project=E:\Earth-online\UE5\EarthOnline.uproject -noP4 -platform=Win64 -clientconfig=Development -cook -allmaps -build -stage -pak -archive -archivedirectory=E:\Earth-online\Packaged -NoZenStore
+Initializing script modules...
+Total script module initialization time: 27.66 s.
+Using C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe
+Executing commands...
+Setting up ProjectParams for E:\Earth-online\UE5\EarthOnline.uproject
+********** BUILD COMMAND STARTED **********
+Running: E:\Earth-online\UE5\UE_5.8\Engine\Binaries\ThirdParty\DotNet\10.0\win-x64\dotnet.exe "E:\Earth-online\UE5\UE_5.8\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" -Target="EarthOnlineEditor Win64 Development -Project=E:\Earth-online\UE5\EarthOnline.uproject" -Target="EarthOnline Win64 Development -Project=E:\Earth-online\UE5\EarthOnline.uproject  -remoteini=\"E:\Earth-online\UE5\"  " -log="C:\Users\Hacker\AppData\Roaming\Unreal Engine\AutomationTool\Logs\E+Earth-online+UE5+UE_5.8\UBA-EarthOnlineEditor-Win64-Development.txt"
+Log file: C:\Users\Hacker\AppData\Roaming\Unreal Engine\AutomationTool\Logs\E+Earth-online+UE5+UE_5.8\UBA-EarthOnlineEditor-Win64-Development.txt
+Determining max actions to execute in parallel (6 physical cores, 6 logical cores)
+  Executing up to 6 processes, one per physical core
+  Requested 1.5 GB memory per action, 3.38 GB available: limiting max parallel actions to 2
+Using 'git status' to determine working set for adaptive non-unity build (E:\Earth-online).
+UbaStorageServer - Previous run was not gracefully shutdown. Reparsing cas directory C:\ProgramData\Epic\UnrealBuildAccelerator\cas\ to check for added/missing/corrupt files (Saved 2026-10-11 09:45:07)
+UbaStorageServer - Validated storage (size 0b) in <1ms
+UbaServer - Listening on 0.0.0.0:1345
+Building EarthOnline and EarthOnlineEditor...
+===== Toolchain Information =====
+EarthOnline Win64 Development:
+  Using ISPC compiler (E:\Earth-online\UE5\UE_5.8\Engine\Source\ThirdParty\Intel\ISPC\bin\Windows\ispc.exe)
+    Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2)
+  Using Visual Studio 14.44.35229 toolchain (C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+  [Adaptive Build] Excluded from EarthOnline unity file: EOBaseCharacter.cpp, EOGameInstance.cpp, EOGameMode.cpp, EOHUD.cpp, EOPlayerController.cpp, EOKeyManager.cpp, EOHUDWidget.cpp, EOKeyInputWidget.cpp, EOMainMenuWidget.cpp
+EarthOnlineEditor Win64 Development:
+  Using ISPC compiler (E:\Earth-online\UE5\UE_5.8\Engine\Source\ThirdParty\Intel\ISPC\bin\Windows\ispc.exe)
+    Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2)
+  Using Visual Studio 14.44.35229 toolchain (C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207) and Windows 10.0.26100.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+  [Adaptive Build] Excluded from EarthOnline unity file: EOBaseCharacter.cpp, EOGameInstance.cpp, EOGameMode.cpp, EOHUD.cpp, EOPlayerController.cpp, EOKeyManager.cpp, EOHUDWidget.cpp, EOKeyInputWidget.cpp, EOMainMenuWidget.cpp

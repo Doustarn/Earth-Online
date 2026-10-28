@@ -13,6 +13,7 @@ set "UPROJECT=%PROJECT_DIR%EarthOnline.uproject"
 
 :: 查找UE引擎
 set "UE_DIR="
+if exist "%PROJECT_DIR%UE_5.8" set "UE_DIR=%PROJECT_DIR%UE_5.8"
 if exist "C:\Program Files\Epic Games\UE_5.8" set "UE_DIR=C:\Program Files\Epic Games\UE_5.8"
 if exist "D:\EpicGames\UE_5.8" set "UE_DIR=D:\EpicGames\UE_5.8"
 if exist "E:\EpicGames\UE_5.8" set "UE_DIR=E:\EpicGames\UE_5.8"

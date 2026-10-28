@@ -1,0 +1,43 @@
+========================================
+  地球Online - 客户端打包
+========================================
+
+[信息] 项目: F:\Earth-online\UE5\EarthOnline.uproject
+[信息] 输出: F:\Earth-online\UE5\Packaged\WindowsClient
+
+正在打包Windows客户端（Development配置）...
+这可能需要10-30分钟，请耐心等待...
+
+Running AutomationTool...
+Using bundled DotNet SDK version: 10.0 win-x64
+Starting AutomationTool...
+Parsing command line: BuildCookRun -project=F:\Earth-online\UE5\EarthOnline.uproject -noP4 -platform=Win64 -clientconfig=Development -serverconfig=Development -cook -allmaps -build -stage -pak -archive -archivedirectory=F:\Earth-online\UE5\Packaged\WindowsClient -compressed
+Initializing script modules...
+Total script module initialization time: 1.23 s.
+Using D:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe
+Executing commands...
+Setting up ProjectParams for F:\Earth-online\UE5\EarthOnline.uproject
+********** BUILD COMMAND STARTED **********
+Running: F:\Earth-online\UE5\UE_5.8\Engine\Binaries\ThirdParty\DotNet\10.0\win-x64\dotnet.exe "F:\Earth-online\UE5\UE_5.8\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" -Target="EarthOnlineEditor Win64 Development -Project=F:\Earth-online\UE5\EarthOnline.uproject" -Target="EarthOnline Win64 Development -Project=F:\Earth-online\UE5\EarthOnline.uproject  -remoteini=\"F:\Earth-online\UE5\"  " -log="C:\Users\Hacker\AppData\Roaming\Unreal Engine\AutomationTool\Logs\F+Earth-online+UE5+UE_5.8\UBA-EarthOnlineEditor-Win64-Development.txt"
+Log file: C:\Users\Hacker\AppData\Roaming\Unreal Engine\AutomationTool\Logs\F+Earth-online+UE5+UE_5.8\UBA-EarthOnlineEditor-Win64-Development.txt
+Determining max actions to execute in parallel (6 physical cores, 6 logical cores)
+  Executing up to 6 processes, one per physical core
+  Requested 1.5 GB memory per action, 1.84 GB available: limiting max parallel actions to 1
+Using 'git status' to determine working set for adaptive non-unity build (F:\Earth-online).
+UbaServer - Listening on 0.0.0.0:1345
+Creating makefile for EarthOnline (no existing makefile)
+Creating makefile for EarthOnlineEditor (Build.version is newer)
+Platform Win64 is not a valid platform to build. SDK validation failed:
+  Sdk: not found. Required version 10.0.19041.0.
+
+Result: Failed (OtherCompilationError)
+Total execution time: 2.17 seconds
+Trace written to file C:\Users\Hacker\AppData\Local\UnrealBuildTool\Trace.uba with size 1.6kb
+Took 3.49s to run dotnet.exe, ExitCode=6
+UnrealBuildTool failed. See log for more details. (C:\Users\Hacker\AppData\Roaming\Unreal Engine\AutomationTool\Logs\F+Earth-online+UE5+UE_5.8\UBA-EarthOnlineEditor-Win64-Development.txt)
+AutomationTool executed for 0h 0m 17s
+AutomationTool exiting with ExitCode=6 (6)
+BUILD FAILED
+
+[错误] 打包失败
+Press any key to continue . . . 

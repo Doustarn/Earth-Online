@@ -38,6 +38,10 @@ public:
     UFUNCTION(BlueprintCallable, Category = "UI")
     void ShowKeyInput();
 
+    // 获取游戏 HUD Widget（供交互调用）
+    UFUNCTION(BlueprintCallable, Category = "UI")
+    UEOHUDWidget* GetGameHUD() const { return GameHUDWidget; }
+
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<UEOMainMenuWidget> MainMenuWidgetClass;
@@ -56,6 +60,9 @@ protected:
 
     UPROPERTY()
     UEOKeyInputWidget* KeyInputWidget;
+
+    // 自动截图定时器（验收验证用）
+    FTimerHandle ScreenshotTimer;
 
     bool bMenuVisible;
 };

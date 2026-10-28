@@ -30,5 +30,5 @@ public:
     virtual void Logout(AController* Exiting) override;
 
     UFUNCTION(BlueprintCallable, Category = "游戏")
-    int32 GetCurrentPlayerCount() const;
+    int32 GetCurrentPlayerCount();
 };

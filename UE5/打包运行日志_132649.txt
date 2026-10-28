@@ -1,0 +1,30 @@
+========================================
+  地球Online - 一键打包发布工具
+========================================
+
+此脚本将自动完成：
+  1. 编译C++项目
+  2. 打包Windows客户端
+  3. 生成玩家安装包
+
+项目: F:\Earth-online\UE5\EarthOnline.uproject
+输出: F:\Earth-online\UE5\Release
+
+[信息] 引擎: F:\Earth-online\UE5\UE_5.8
+
+[1/4] 编译C++项目...
+Log file: C:\Users\Hacker\AppData\Local\UnrealBuildTool\Log.txt
+Determining max actions to execute in parallel (6 physical cores, 6 logical cores)
+  Executing up to 6 processes, one per physical core
+  Requested 1.5 GB memory per action, 1.08 GB available: limiting max parallel actions to 1
+Using 'git status' to determine working set for adaptive non-unity build (F:\Earth-online).
+UbaServer - Listening on 0.0.0.0:1345
+Invalidating makefile for EarthOnlineEditor (cl.exe deleted)
+Platform Win64 is not a valid platform to build. SDK validation failed:
+  Sdk: not found. Required version 10.0.19041.0.
+
+Result: Failed (OtherCompilationError)
+Total execution time: 12.10 seconds
+Trace written to file C:\Users\Hacker\AppData\Local\UnrealBuildTool\Trace.uba with size 2.4kb
+[错误] 编译失败
+Press any key to continue . . . 

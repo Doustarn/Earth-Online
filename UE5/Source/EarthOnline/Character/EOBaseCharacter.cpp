@@ -1,6 +1,7 @@
-#include "Character/EOBaseCharacter.h"
+#include "EOBaseCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "InputCoreTypes.h"
 
 AEOBaseCharacter::AEOBaseCharacter()
 {
@@ -44,6 +45,15 @@ void AEOBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
     PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AEOBaseCharacter::JumpPressed);
     PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AEOBaseCharacter::SprintStart);
     PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AEOBaseCharacter::SprintEnd);
+
+    // —— 手柄支持（主机级体验）——
+    PlayerInputComponent->BindAxisKey(EKeys::Gamepad_LeftX, this, &AEOBaseCharacter::MoveRight);
+    PlayerInputComponent->BindAxisKey(EKeys::Gamepad_LeftY, this, &AEOBaseCharacter::MoveForward);
+    PlayerInputComponent->BindAxisKey(EKeys::Gamepad_RightX, this, &AEOBaseCharacter::Turn);
+    PlayerInputComponent->BindAxisKey(EKeys::Gamepad_RightY, this, &AEOBaseCharacter::LookUp);
+    PlayerInputComponent->BindKey(EKeys::Gamepad_FaceButton_Bottom, IE_Pressed, this, &AEOBaseCharacter::JumpPressed);
+    PlayerInputComponent->BindKey(EKeys::Gamepad_LeftShoulder, IE_Pressed, this, &AEOBaseCharacter::SprintStart);
+    PlayerInputComponent->BindKey(EKeys::Gamepad_LeftShoulder, IE_Released, this, &AEOBaseCharacter::SprintEnd);
 }
 
 void AEOBaseCharacter::MoveForward(float Value)

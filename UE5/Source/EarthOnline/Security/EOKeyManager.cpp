@@ -1,8 +1,10 @@
-#include "Security/EOKeyManager.h"
-#include "Misc/SecureHash.h"
+#include "EOKeyManager.h"
 #include "HAL/FileManager.h"
 #include "Misc/Paths.h"
 #include "Misc/FileHelper.h"
+#include "Windows/WindowsHWrapper.h"
+#include <bcrypt.h>
+#pragma comment(lib, "bcrypt.lib")
 
 // 游戏版本号
 const FString UEOKeyManager::GameVersion = TEXT("0.1.8");
@@ -22,17 +24,26 @@ FString UEOKeyManager::ComputeSHA256(const FString& Input)
     // 转换为UTF8字节
     FTCHARToUTF8 Converter(*Input);
     const uint8* Data = (const uint8*)Converter.Get();
-    int32 Length = Converter.Length();
+    ULONG Length = (ULONG)Converter.Length();
 
-    // 计算SHA256
-    FSHA256Hash Hash;
-    FSHA256::HashBuffer(Data, Length, Hash);
+    // 使用Windows BCrypt API计算SHA256
+    BCRYPT_ALG_HANDLE hAlgorithm = NULL;
+    BCRYPT_HASH_HANDLE hHash = NULL;
+    BYTE Hash[32] = {0};
+    ULONG ResultLength = 0;
+
+    BCryptOpenAlgorithmProvider(&hAlgorithm, BCRYPT_SHA256_ALGORITHM, NULL, 0);
+    BCryptCreateHash(hAlgorithm, &hHash, NULL, 0, NULL, 0, 0);
+    BCryptHashData(hHash, (PUCHAR)Data, Length, 0);
+    BCryptFinishHash(hHash, Hash, 32, 0);
+    BCryptDestroyHash(hHash);
+    BCryptCloseAlgorithmProvider(hAlgorithm, 0);
 
     // 转为十六进制字符串
     FString HashHex;
     for (int32 i = 0; i < 32; i++)
     {
-        HashHex += FString::Printf(TEXT("%02x"), Hash.Bytes[i]);
+        HashHex += FString::Printf(TEXT("%02x"), (int32)Hash[i]);
     }
 
     return HashHex;

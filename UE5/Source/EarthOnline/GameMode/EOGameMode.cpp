@@ -1,7 +1,7 @@
-#include "GameMode/EOGameMode.h"
-#include "PlayerController/EOPlayerController.h"
-#include "Character/EOBaseCharacter.h"
-#include "HUD/EOHUD.h"
+#include "EOGameMode.h"
+#include "../PlayerController/EOPlayerController.h"
+#include "../Character/EOBaseCharacter.h"
+#include "../HUD/EOHUD.h"
 
 AEOGameMode::AEOGameMode()
 {
@@ -41,7 +41,7 @@ void AEOGameMode::Logout(AController* Exiting)
     UE_LOG(LogTemp, Log, TEXT("玩家离开服务器，当前人数: %d"), GetCurrentPlayerCount());
 }
 
-int32 AEOGameMode::GetCurrentPlayerCount() const
+int32 AEOGameMode::GetCurrentPlayerCount()
 {
     return GetNumPlayers();
 }

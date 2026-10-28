@@ -1,4 +1,4 @@
-#include "GameInstance/EOGameInstance.h"
+#include "EOGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/Engine.h"
 
@@ -21,24 +21,18 @@ void UEOGameInstance::JoinServer(const FString& Address, int32 Port)
     ServerAddress = Address;
     ServerPort = Port;
 
-    if (GEngine)
-    {
-        FString URL = FString::Printf(TEXT("%s:%d"), *Address, Port);
-        UE_LOG(LogTemp, Log, TEXT("正在连接服务器: %s"), *URL);
-        GEngine->Browse(GetWorld(), *URL);
-    }
+    FString URL = FString::Printf(TEXT("%s:%d"), *Address, Port);
+    UE_LOG(LogTemp, Log, TEXT("正在连接服务器: %s"), *URL);
+    UGameplayStatics::OpenLevel(GetWorld(), *URL);
 }
 
 void UEOGameInstance::HostServer(int32 Port, int32 MaxPlayers)
 {
     ServerPort = Port;
 
-    if (GEngine)
-    {
-        FString URL = FString::Printf(TEXT("/Game/Maps/TestMap?listen?port=%d?maxplayers=%d"), Port, MaxPlayers);
-        UE_LOG(LogTemp, Log, TEXT("正在创建监听服务器: %s"), *URL);
-        GEngine->Browse(GetWorld(), *URL);
-    }
+    FString URL = FString::Printf(TEXT("/Game/Maps/TestMap?listen?port=%d?maxplayers=%d"), Port, MaxPlayers);
+    UE_LOG(LogTemp, Log, TEXT("正在创建监听服务器: %s"), *URL);
+    UGameplayStatics::OpenLevel(GetWorld(), *URL);
 }
 
 void UEOGameInstance::ReturnToMainMenu()

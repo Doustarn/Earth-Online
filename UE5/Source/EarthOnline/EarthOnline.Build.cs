@@ -24,7 +24,10 @@ public class EarthOnline : ModuleRules
         PrivateDependencyModuleNames.AddRange(new string[]
         {
             "Renderer",
-            "Projects"
+            "RHI",
+            "RenderCore",
+            "Projects",
+            "Json"
         });
     }
 }

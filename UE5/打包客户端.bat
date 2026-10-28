@@ -13,6 +13,7 @@ set "OUTPUT_DIR=%PROJECT_DIR%Packaged\WindowsClient"
 
 :: 查找UE引擎
 set "UE_DIR="
+if exist "%PROJECT_DIR%UE_5.8" set "UE_DIR=%PROJECT_DIR%UE_5.8"
 if exist "C:\Program Files\Epic Games\UE_5.8" set "UE_DIR=C:\Program Files\Epic Games\UE_5.8"
 if exist "D:\EpicGames\UE_5.8" set "UE_DIR=D:\EpicGames\UE_5.8"
 if exist "E:\EpicGames\UE_5.8" set "UE_DIR=E:\EpicGames\UE_5.8"
@@ -33,7 +34,7 @@ echo 正在打包Windows客户端（Development配置）...
 echo 这可能需要10-30分钟，请耐心等待...
 echo.
 
-call "%UAT%" BuildCookRun -project="%UPROJECT%" -noP4 -platform=Win64 -clientconfig=Development -serverconfig=Development -cook -allmaps -build -stage -pak -archive -archivedirectory="%OUTPUT_DIR%" -compressed
+call "%UAT%" BuildCookRun -project="%UPROJECT%" -noP4 -platform=Win64 -clientconfig=Development -serverconfig=Development -cook -allmaps -build -stage -pak -skipiostore -archive -archivedirectory="%OUTPUT_DIR%" -compressed
 
 if %ERRORLEVEL% neq 0 (
     echo.
