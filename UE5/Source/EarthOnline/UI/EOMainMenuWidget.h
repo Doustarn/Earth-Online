@@ -60,6 +60,7 @@ protected:
 
     // 辅助：生成带文字/图标的圆角按钮
     UButton* MakeStyledButton(const FString& Text, float FontSize, const FLinearColor& Bg, const FLinearColor& Fg);
+    UButton* MakeBlackMythButton(const FString& Text, bool bPrimary);
     UTextBlock* MakeText(const FString& Text, float Size, const FLinearColor& Color);
 
     UFUNCTION()

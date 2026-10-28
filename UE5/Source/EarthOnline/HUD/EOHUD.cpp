@@ -91,6 +91,8 @@ void AEOHUD::BeginPlay()
         {
             MainMenuWidget->AddToViewport();
             MainMenuWidget->SetVisibility(ESlateVisibility::Hidden);
+            // 绑定开始游戏 → 登录界面（必须在这里绑，ShowMainMenu 的 !MainMenuWidget 分支不会走到）
+            MainMenuWidget->OnStartGame.AddDynamic(this, &AEOHUD::ShowKeyInput);
         }
     }
 

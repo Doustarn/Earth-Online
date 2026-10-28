@@ -123,32 +123,40 @@ void UEOMainMenuWidget::BuildEarth()
 
 void UEOMainMenuWidget::BuildCenterButtons()
 {
-    // 中央：开始游戏按钮 + tap anywhere
-    UVerticalBox* Center = NewObject<UVerticalBox>(this);
-    if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(Center))
+    // 黑神话风格：底部居中垂直菜单
+    UVerticalBox* Menu = NewObject<UVerticalBox>(this);
+    if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(Menu))
     {
-        S->SetAnchors(FAnchors(0.5f, 0.5f));
-        S->SetAlignment(FVector2D(0.5f, 0.5f));
-        S->SetPosition(FVector2D(0.0f, -40.0f));
+        S->SetAnchors(FAnchors(0.5f, 1.0f, 0.5f, 1.0f));
+        S->SetAlignment(FVector2D(0.5f, 1.0f));
+        S->SetPosition(FVector2D(0.0f, -220.0f));
         S->SetAutoSize(true);
         S->SetZOrder(5);
     }
 
-    StartButton = MakeStyledButton(TEXT("开始游戏"), 30.0f, FLinearColor(0.14f, 0.36f, 0.62f, 0.62f), FLinearColor(0.96f, 0.98f, 1.0f, 1.0f));
+    // 主按钮：开始游戏（金色高亮）
+    StartButton = MakeBlackMythButton(TEXT("开 始 游 戏"), true);
     StartButton->OnClicked.AddDynamic(this, &UEOMainMenuWidget::OnStartClicked);
-    if (UVerticalBoxSlot* BS = Center->AddChildToVerticalBox(StartButton))
+    if (UVerticalBoxSlot* BS = Menu->AddChildToVerticalBox(StartButton))
     {
         BS->SetHorizontalAlignment(HAlign_Center);
-        BS->SetPadding(FMargin(0.0f, 0.0f, 0.0f, 10.0f));
+        BS->SetPadding(FMargin(0.0f, 0.0f, 0.0f, 14.0f));
     }
 
-    TapAnywhereText = MakeText(TEXT("tap anywhere to start"), 15.0f, FLinearColor(0.7f, 0.75f, 0.8f, 0.9f));
-    if (UVerticalBoxSlot* TS = Center->AddChildToVerticalBox(TapAnywhereText))
+    // 次要按钮：继续游戏 / 设置 / 退出
+    const TArray<FString> SubItems = { TEXT("继 续 游 戏"), TEXT("设 置"), TEXT("退 出") };
+    for (int32 i = 0; i < SubItems.Num(); i++)
     {
-        TS->SetHorizontalAlignment(HAlign_Center);
+        UButton* Sub = MakeBlackMythButton(SubItems[i], false);
+        Sub->OnClicked.AddDynamic(this, &UEOMainMenuWidget::OnIconClicked);
+        if (UVerticalBoxSlot* BS = Menu->AddChildToVerticalBox(Sub))
+        {
+            BS->SetHorizontalAlignment(HAlign_Center);
+            BS->SetPadding(FMargin(0.0f, 0.0f, 0.0f, 8.0f));
+        }
     }
 
-    // 服务器信息（地球下方）
+    // 服务器信息（地球上方）
     ServerInfoText = MakeText(TEXT("亚洲 · 中国服 · 山西"), 16.0f, FLinearColor(0.55f, 0.75f, 0.95f, 0.95f));
     if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(ServerInfoText))
     {
@@ -228,7 +236,39 @@ UButton* UEOMainMenuWidget::MakeStyledButton(const FString& Text, float FontSize
     return Btn;
 }
 
-UTextBlock* UEOMainMenuWidget::MakeText(const FString& Text, float Size, const FLinearColor& Color)
+UButton* UEOMainMenuWidget::MakeBlackMythButton(const FString& Text, bool bPrimary)
+{
+    UButton* Btn = NewObject<UButton>(this);
+    Btn->SetVisibility(ESlateVisibility::Visible);
+
+    FButtonStyle BtnStyle = Btn->WidgetStyle;
+    if (bPrimary)
+    {
+        // 主按钮：金色底 + 深色字
+        BtnStyle.Normal.TintColor = FLinearColor(0.83f, 0.69f, 0.22f, 0.92f);
+        BtnStyle.Hovered.TintColor = FLinearColor(1.0f, 0.86f, 0.42f, 1.0f);
+        BtnStyle.Pressed.TintColor = FLinearColor(0.70f, 0.55f, 0.15f, 1.0f);
+    }
+    else
+    {
+        // 次按钮：半透明深黑底 + 白字，悬停泛金
+        BtnStyle.Normal.TintColor = FLinearColor(0.05f, 0.05f, 0.08f, 0.55f);
+        BtnStyle.Hovered.TintColor = FLinearColor(0.83f, 0.69f, 0.22f, 0.35f);
+        BtnStyle.Pressed.TintColor = FLinearColor(0.05f, 0.05f, 0.08f, 0.85f);
+    }
+    Btn->WidgetStyle = BtnStyle;
+
+    UTextBlock* Label = NewObject<UTextBlock>(this);
+    Label->SetText(FText::FromString(Text));
+    Label->SetFont(FSlateFontInfo(FPaths::EngineContentDir() / TEXT("Slate/Fonts/DroidSansFallback.ttf"), bPrimary ? 26 : 18));
+    Label->SetColorAndOpacity(bPrimary ? FLinearColor(0.12f, 0.08f, 0.02f, 1.0f) : FLinearColor(0.92f, 0.92f, 0.94f, 0.95f));
+    Label->SetJustification(ETextJustify::Center);
+    Btn->SetContent(Label);
+
+    // Padding 撑开按钮尺寸
+    Btn->SetPadding(bPrimary ? FMargin(48.0f, 14.0f, 48.0f, 14.0f) : FMargin(36.0f, 10.0f, 36.0f, 10.0f));
+    return Btn;
+}
 {
     UTextBlock* T = NewObject<UTextBlock>(this);
     T->SetText(FText::FromString(Text));
