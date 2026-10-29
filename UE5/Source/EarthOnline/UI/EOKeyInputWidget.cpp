@@ -2,337 +2,256 @@
 #include "Blueprint/WidgetTree.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
-#include "Components/Image.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
-#include "Components/Border.h"
+#include "Components/Image.h"
 #include "Components/EditableTextBox.h"
 #include "Components/VerticalBox.h"
 #include "Components/VerticalBoxSlot.h"
-#include "Engine/Texture2D.h"
-#include "RenderingThread.h"
-#include "ImageUtils.h"
-#include "../Security/EOKeyManager.h"
-#include "../HUD/EOHUD.h"
+#include "Components/HorizontalBox.h"
+#include "Components/HorizontalBoxSlot.h"
+#include "Components/SizeBox.h"
+#include "Engine/Engine.h"
 
 bool UEOKeyInputWidget::Initialize()
 {
     if (!Super::Initialize()) return false;
-
-    EarthRotation = 0.0f;
-    CurrentStage = -1;
-    bLoading = false;
-
+    GameState = 0;
     BuildUI();
-
-    // 检查是否已激活
-    if (UEOKeyManager::IsKeyActivated())
-    {
-        SetStatus(TEXT("已激活，正在进入地球..."), FColor::Green);
-        BeginLoading();
-    }
-    else
-    {
-        SetStatus(TEXT("请输入接入密钥以继续"), FColor::White);
-    }
-
+    ShowState(0);
     return true;
 }
-
-void UEOKeyInputWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-{
-    Super::NativeTick(MyGeometry, InDeltaTime);
-    if (EarthImage)
-    {
-        EarthRotation += InDeltaTime * 6.0f;
-        EarthImage->SetRenderTransformAngle(EarthRotation);
-    }
-}
-
-void UEOKeyInputWidget::BeginLoading()
-{
-    if (bLoading) return;
-    bLoading = true;
-    CurrentStage = 0;
-
-    if (KeyPanel) KeyPanel->SetVisibility(ESlateVisibility::Collapsed);
-
-    // 显示第一段加载
-    StageText->SetVisibility(ESlateVisibility::Visible);
-    SubText->SetVisibility(ESlateVisibility::Visible);
-    SetStageText(TEXT("人物生成中"));
-
-    // 依次推进
-    GetWorld()->GetTimerManager().SetTimer(StageTimer, this, &UEOKeyInputWidget::AdvanceStage, 2.0f, true);
-    GetWorld()->GetTimerManager().SetTimer(FlashTimer, this, &UEOKeyInputWidget::ShowFlash, 2.0f - 0.25f, true);
-}
-
-void UEOKeyInputWidget::CompleteImmediately()
-{
-    FinishLoading();
-}
-
-void UEOKeyInputWidget::AdvanceStage()
-{
-    CurrentStage++;
-    if (CurrentStage < 4)
-    {
-        static const FString StageNames[] = { TEXT("人物生成中"), TEXT("场景生成中"), TEXT("海洋生成中"), TEXT("加载中") };
-        SetStageText(StageNames[CurrentStage]);
-        // 段间闪黑
-        if (FlashImage)
-        {
-            FlashImage->SetVisibility(ESlateVisibility::Visible);
-            FlashImage->SetColorAndOpacity(FLinearColor(0.0f, 0.0f, 0.0f, 0.9f));
-            GetWorld()->GetTimerManager().SetTimer(FlashHideTimer, [this]()
-            {
-                if (FlashImage) FlashImage->SetVisibility(ESlateVisibility::Hidden);
-            }, 0.3f, false);
-        }
-    }
-    else
-    {
-        GetWorld()->GetTimerManager().ClearTimer(StageTimer);
-        GetWorld()->GetTimerManager().ClearTimer(FlashTimer);
-        FinishLoading();
-    }
-}
-
-void UEOKeyInputWidget::ShowFlash()
-{
-    // 每段结束前的闪黑由 AdvanceStage 触发，这里作为兜底
-}
-
-void UEOKeyInputWidget::FinishLoading()
-{
-    bLoading = false;
-    if (SubText) SubText->SetText(FText::FromString(TEXT("载入完成，欢迎来到地球Online")));
-    SetStatus(TEXT(""), FColor::White);
-
-    FTimerHandle H;
-    GetWorld()->GetTimerManager().SetTimer(H, [this]()
-    {
-        this->RemoveFromParent();
-        OnLoadingComplete.Broadcast();
-    }, 1.2f, false);
-}
-
-void UEOKeyInputWidget::SetStageText(const FString& Text)
-{
-    if (StageText)
-    {
-        StageText->SetText(FText::FromString(Text));
-    }
-    if (SubText)
-    {
-        SubText->SetText(FText::FromString(TEXT("正在进入地球Online...")));
-    }
-}
-
-// ============================================================ 构建
 
 void UEOKeyInputWidget::BuildUI()
 {
     MainCanvas = WidgetTree->ConstructWidget<UCanvasPanel>(UCanvasPanel::StaticClass());
     if (WidgetTree) WidgetTree->RootWidget = MainCanvas;
-
     BuildBackground();
-    BuildEarth();
-    BuildStageText();
-    BuildKeyVerify();
 }
 
 void UEOKeyInputWidget::BuildBackground()
 {
-    // 非黑背景：深蓝→星空渐变
+    UCanvasPanelSlot* S = nullptr;
+    // 深色底
     UImage* Bg = NewObject<UImage>(this);
-    Bg->SetColorAndOpacity(FLinearColor(0.03f, 0.06f, 0.12f, 1.0f));
-    if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(Bg))
+    Bg->SetColorAndOpacity(FLinearColor(0.04f, 0.05f, 0.10f, 1.0f));
+    Bg->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+    if ((S = MainCanvas->AddChildToCanvas(Bg)))
     {
-        S->SetAnchors(FAnchors(0.0f, 0.0f, 1.0f, 1.0f));
-        S->SetOffsets(FMargin(0.0f, 0.0f, 0.0f, 0.0f));
+        S->SetAnchors(FAnchors(0,0,1,1));
+        S->SetOffsets(FMargin(0,0,0,0));
         S->SetZOrder(0);
-    }
-
-    // 顶部亮度渐变（模拟天空）
-    UImage* Grad = NewObject<UImage>(this);
-    Grad->SetColorAndOpacity(FLinearColor(0.05f, 0.1f, 0.18f, 0.6f));
-    if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(Grad))
-    {
-        S->SetAnchors(FAnchors(0.0f, 0.0f, 1.0f, 0.5f));
-        S->SetOffsets(FMargin(0.0f, 0.0f, 0.0f, 0.0f));
-        S->SetZOrder(1);
-    }
-
-    // 闪黑遮罩（默认隐藏）
-    FlashImage = NewObject<UImage>(this);
-    FlashImage->SetColorAndOpacity(FLinearColor(0.0f, 0.0f, 0.0f, 0.9f));
-    FlashImage->SetVisibility(ESlateVisibility::Hidden);
-    if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(FlashImage))
-    {
-        S->SetAnchors(FAnchors(0.0f, 0.0f, 1.0f, 1.0f));
-        S->SetOffsets(FMargin(0.0f, 0.0f, 0.0f, 0.0f));
-        S->SetZOrder(50);
     }
 }
 
-void UEOKeyInputWidget::BuildEarth()
+void UEOKeyInputWidget::ShowState(int32 NewState)
 {
-    GeneratedEarth = CreateEarthTexture();
-    EarthImage = NewObject<UImage>(this);
-    EarthImage->SetBrushFromTexture(GeneratedEarth);
-    if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(EarthImage))
+    GameState = NewState;
+    if (MainCanvas)
     {
-        S->SetAnchors(FAnchors(0.5f, 0.5f));
+        // 清掉旧的动态子控件（保留背景）
+        TArray<UWidget*> ToRemove;
+        for (int32 i = 0; i < MainCanvas->GetChildrenCount(); i++)
+        {
+            UWidget* Child = MainCanvas->GetChildAt(i);
+            if (Child && Child->GetZOrder() > 0) ToRemove.Add(Child);
+        }
+        for (UWidget* W : ToRemove) MainCanvas->RemoveChild(W);
+    }
+    ClassButtons.Empty();
+    ClassDescs.Empty();
+
+    if (NewState == 0) ShowLoginState();
+    else if (NewState == 1) ShowIdentityState();
+    else if (NewState == 2) ShowClassState();
+}
+
+void UEOKeyInputWidget::ShowLoginState()
+{
+    UTextBlock* Title = MakeText(TEXT("IMMORTAL DAO ONLINE"), 40.0f, FLinearColor(0.95f, 0.85f, 0.55f, 1.0f));
+    if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(Title))
+    {
+        S->SetAnchors(FAnchors(0.5f, 0.3f, 0.5f, 0.3f));
         S->SetAlignment(FVector2D(0.5f, 0.5f));
-        S->SetPosition(FVector2D(0.0f, -30.0f));
-        S->SetSize(FVector2D(520.0f, 520.0f));
+        S->SetAutoSize(true);
+        S->SetZOrder(5);
+    }
+
+    UTextBlock* Sub = MakeText(TEXT("请输入你的道号"), 20.0f, FLinearColor(0.7f, 0.75f, 0.85f, 0.9f));
+    if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(Sub))
+    {
+        S->SetAnchors(FAnchors(0.5f, 0.45f, 0.5f, 0.45f));
+        S->SetAlignment(FVector2D(0.5f, 0.5f));
+        S->SetAutoSize(true);
+        S->SetZOrder(5);
+    }
+
+    // 输入框
+    NameInput = NewObject<UEditableTextBox>(this);
+    NameInput->SetHintText(FText::FromString(TEXT("输入道号...")));
+    if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(NameInput))
+    {
+        S->SetAnchors(FAnchors(0.5f, 0.52f, 0.5f, 0.52f));
+        S->SetAlignment(FVector2D(0.5f, 0.5f));
+        S->SetSize(FVector2D(360.0f, 44.0f));
+        S->SetZOrder(5);
+    }
+
+    ConfirmNameBtn = NewObject<UButton>(this);
+    FButtonStyle BS = ConfirmNameBtn->WidgetStyle;
+    BS.Normal.TintColor = FLinearColor(0.83f, 0.69f, 0.22f, 0.92f);
+    BS.Hovered.TintColor = FLinearColor(1.0f, 0.86f, 0.42f, 1.0f);
+    BS.Pressed.TintColor = FLinearColor(0.70f, 0.55f, 0.15f, 1.0f);
+    ConfirmNameBtn->WidgetStyle = BS;
+    UTextBlock* BtnLabel = NewObject<UTextBlock>(this);
+    BtnLabel->SetText(FText::FromString(TEXT("进 入 仙 途")));
+    BtnLabel->SetFont(FSlateFontInfo(FPaths::EngineContentDir() / TEXT("Slate/Fonts/DroidSansFallback.ttf"), 22));
+    BtnLabel->SetColorAndOpacity(FLinearColor(0.12f, 0.08f, 0.02f, 1.0f));
+    BtnLabel->SetJustification(ETextJustify::Center);
+    ConfirmNameBtn->SetContent(BtnLabel);
+    ConfirmNameBtn->SetPadding(FMargin(50.0f, 12.0f, 50.0f, 12.0f));
+    ConfirmNameBtn->OnClicked.AddDynamic(this, &UEOKeyInputWidget::OnConfirmName);
+    if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(ConfirmNameBtn))
+    {
+        S->SetAnchors(FAnchors(0.5f, 0.62f, 0.5f, 0.62f));
+        S->SetAlignment(FVector2D(0.5f, 0.5f));
+        S->SetAutoSize(true);
         S->SetZOrder(5);
     }
 }
 
-void UEOKeyInputWidget::BuildStageText()
+void UEOKeyInputWidget::ShowIdentityState()
 {
-    StageText = MakeText(TEXT(""), 30.0f, FLinearColor(0.9f, 0.95f, 1.0f, 1.0f));
-    StageText->SetJustification(ETextJustify::Center);
-    StageText->SetVisibility(ESlateVisibility::Collapsed);
-    if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(StageText))
-    {
-        S->SetAnchors(FAnchors(0.5f, 0.5f, 0.5f, 0.5f));
-        S->SetAlignment(FVector2D(0.5f, 0.5f));
-        S->SetPosition(FVector2D(0.0f, 210.0f));
-        S->SetSize(FVector2D(900.0f, 50.0f));
-        S->SetZOrder(10);
-    }
+    FString Identity = GenerateRandomIdentity();
 
-    SubText = MakeText(TEXT("正在进入地球Online..."), 16.0f, FLinearColor(0.7f, 0.8f, 0.95f, 0.9f));
-    SubText->SetJustification(ETextJustify::Center);
-    SubText->SetVisibility(ESlateVisibility::Collapsed);
-    if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(SubText))
+    IdentityText = MakeText(Identity, 28.0f, FLinearColor(0.95f, 0.85f, 0.55f, 1.0f));
+    if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(IdentityText))
     {
-        S->SetAnchors(FAnchors(0.5f, 0.5f, 0.5f, 0.5f));
+        S->SetAnchors(FAnchors(0.5f, 0.4f, 0.5f, 0.4f));
         S->SetAlignment(FVector2D(0.5f, 0.5f));
-        S->SetPosition(FVector2D(0.0f, 265.0f));
-        S->SetSize(FVector2D(900.0f, 30.0f));
-        S->SetZOrder(10);
-    }
-}
-
-void UEOKeyInputWidget::BuildKeyVerify()
-{
-    KeyPanel = NewObject<UBorder>(this);
-    KeyPanel->SetBrushColor(FLinearColor(0.05f, 0.1f, 0.18f, 0.85f));
-    KeyPanel->SetPadding(FMargin(30.0f, 24.0f, 30.0f, 24.0f));
-    if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(KeyPanel))
-    {
-        S->SetAnchors(FAnchors(0.5f, 0.5f));
-        S->SetAlignment(FVector2D(0.5f, 0.5f));
-        S->SetPosition(FVector2D(0.0f, -20.0f));
         S->SetAutoSize(true);
-        S->SetZOrder(20);
+        S->SetZOrder(5);
     }
 
-    UVerticalBox* VBox = NewObject<UVerticalBox>(this);
-    KeyPanel->SetContent(VBox);
-
-    UTextBlock* Title = MakeText(TEXT("地球Online · 通行证接入"), 22.0f, FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
-    Title->SetJustification(ETextJustify::Center);
-    if (UVerticalBoxSlot* TS = VBox->AddChildToVerticalBox(Title))
+    IdentitySub = MakeText(TEXT("前世记忆觉醒中..."), 16.0f, FLinearColor(0.6f, 0.65f, 0.75f, 0.8f));
+    if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(IdentitySub))
     {
-        TS->SetHorizontalAlignment(HAlign_Fill);
-        TS->SetPadding(FMargin(0.0f, 0.0f, 0.0f, 12.0f));
+        S->SetAnchors(FAnchors(0.5f, 0.5f, 0.5f, 0.5f));
+        S->SetAlignment(FVector2D(0.5f, 0.5f));
+        S->SetAutoSize(true);
+        S->SetZOrder(5);
     }
 
-    KeyInput = NewObject<UEditableTextBox>(this);
-    KeyInput->SetHintText(FText::FromString(TEXT("请输入接入密钥 / 通行证")));
-    KeyInput->SetIsReadOnly(false);
-    KeyInput->OnTextChanged.AddDynamic(this, &UEOKeyInputWidget::OnKeyTextChanged);
-    if (UVerticalBoxSlot* KS = VBox->AddChildToVerticalBox(KeyInput))
+    // 3秒后进职业选择
+    if (UWorld* W = GetWorld())
     {
-        KS->SetHorizontalAlignment(HAlign_Fill);
-        KS->SetPadding(FMargin(0.0f, 0.0f, 0.0f, 12.0f));
-    }
-
-    VerifyButton = MakeStyledButton(TEXT("接入地球"), 18.0f, FLinearColor(0.12f, 0.55f, 0.32f, 0.95f), FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
-    VerifyButton->OnClicked.AddDynamic(this, &UEOKeyInputWidget::OnVerifyClicked);
-    if (UVerticalBoxSlot* VS = VBox->AddChildToVerticalBox(VerifyButton))
-    {
-        VS->SetHorizontalAlignment(HAlign_Center);
-        VS->SetPadding(FMargin(0.0f, 0.0f, 0.0f, 10.0f));
-    }
-
-    StatusText = MakeText(TEXT("请输入接入密钥以继续"), 14.0f, FLinearColor(1.0f, 1.0f, 1.0f, 0.9f));
-    StatusText->SetJustification(ETextJustify::Center);
-    if (UVerticalBoxSlot* SS = VBox->AddChildToVerticalBox(StatusText))
-    {
-        SS->SetHorizontalAlignment(HAlign_Fill);
-    }
-}
-
-// ============================================================ 交互
-
-void UEOKeyInputWidget::OnVerifyClicked()
-{
-    if (!KeyInput) return;
-    FString InputKey = KeyInput->GetText().ToString();
-    if (InputKey.IsEmpty())
-    {
-        SetStatus(TEXT("密钥不能为空"), FColor::Red);
-        return;
-    }
-    SetStatus(TEXT("正在验证密钥..."), FColor::Yellow);
-    if (UEOKeyManager::VerifyBetaKey(InputKey))
-    {
-        UEOKeyManager::SaveActivatedKey(InputKey);
-        SetStatus(TEXT("密钥验证成功！正在进入游戏..."), FColor::Green);
-        BeginLoading();
-    }
-    else
-    {
-        SetStatus(TEXT("密钥无效，请检查后重试"), FColor::Red);
-    }
-}
-
-void UEOKeyInputWidget::OnKeyTextChanged(const FText& Text)
-{
-    if (KeyInput)
-    {
-        FString UpperText = Text.ToString().ToUpper();
-        if (UpperText != Text.ToString())
+        W->GetTimerManager().SetTimer(IdentityTimer, [this]()
         {
-            KeyInput->SetText(FText::FromString(UpperText));
+            ShowState(2);
+        }, 3.0f, false);
+    }
+}
+
+void UEOKeyInputWidget::ShowClassState()
+{
+    UTextBlock* Title = MakeText(TEXT("选择你的修仙之路"), 32.0f, FLinearColor(0.95f, 0.85f, 0.55f, 1.0f));
+    if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(Title))
+    {
+        S->SetAnchors(FAnchors(0.5f, 0.15f, 0.5f, 0.15f));
+        S->SetAlignment(FVector2D(0.5f, 0.5f));
+        S->SetAutoSize(true);
+        S->SetZOrder(5);
+    }
+
+    // 5 职业卡片水平排列
+    UHorizontalBox* Row = NewObject<UHorizontalBox>(this);
+    if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(Row))
+    {
+        S->SetAnchors(FAnchors(0.5f, 0.5f, 0.5f, 0.5f));
+        S->SetAlignment(FVector2D(0.5f, 0.5f));
+        S->SetAutoSize(true);
+        S->SetZOrder(5);
+    }
+
+    struct FClassInfo { const TCHAR* Name; const TCHAR* Desc; };
+    static const FClassInfo Classes[] = {
+        { TEXT("剑修"), TEXT("Sword\n近战单体\n御剑术·高暴击") },
+        { TEXT("枪修"), TEXT("Spear\n近战突进\n横扫·破甲") },
+        { TEXT("法修"), TEXT("Mage\n远程AOE\n雷火冰封") },
+        { TEXT("丹修"), TEXT("Alchemist\n辅助治疗\n炼丹·回血") },
+        { TEXT("符修"), TEXT("Talisman\n控场召唤\n画符·雷阵") },
+    };
+
+    for (int32 i = 0; i < 5; i++)
+    {
+        UButton* Card = MakeClassButton(Classes[i].Name, Classes[i].Desc, i);
+        if (UHorizontalBoxSlot* HS = Row->AddChildToHorizontalBox(Card))
+        {
+            HS->SetPadding(FMargin(10.0f, 0.0f, 10.0f, 0.0f));
         }
     }
 }
 
-void UEOKeyInputWidget::SetStatus(const FString& Message, FColor Color)
+FString UEOKeyInputWidget::GenerateRandomIdentity()
 {
-    if (StatusText)
-    {
-        StatusText->SetText(FText::FromString(Message));
-        StatusText->SetColorAndOpacity(FSlateColor(Color));
-    }
+    FRandomStream Rng(FDateTime::Now().GetTicks());
+    static const TCHAR* Sects[] = { TEXT("青云宗"), TEXT("血刀门"), TEXT("太虚观"), TEXT("万佛洞"), TEXT("合欢谷"), TEXT("天煞盟") };
+    static const TCHAR* Surnames[] = { TEXT("李"), TEXT("王"), TEXT("张"), TEXT("刘"), TEXT("陈"), TEXT("杨"), TEXT("赵"), TEXT("黄") };
+    static const TCHAR* Given[] = { TEXT("逍遥"), TEXT("无忌"), TEXT("玄风"), TEXT("青云"), TEXT("无尘"), TEXT("傲雪"), TEXT("啸天"), TEXT("流云") };
+    static const TCHAR* Realms[] = { TEXT("炼气3层"), TEXT("炼气5层"), TEXT("炼气7层"), TEXT("炼气9层"), TEXT("筑基初期"), TEXT("筑基中期"), TEXT("金丹期") };
+
+    FString Sect = Sects[Rng.RandRange(0, 5)];
+    FString Name = Surnames[Rng.RandRange(0, 7)] + FString(Given[Rng.RandRange(0, 7)]);
+    // 80% 炼气, 15% 筑基, 5% 金丹
+    int32 Roll = Rng.RandRange(0, 99);
+    FString Realm;
+    if (Roll < 60) Realm = Realms[Rng.RandRange(0, 3)];
+    else if (Roll < 95) Realm = Realms[Rng.RandRange(4, 5)];
+    else Realm = Realms[6];
+
+    return FString::Printf(TEXT("你是 %s·%s · %s"), *Sect, *Name, *Realm);
 }
 
-// ============================================================ 辅助控件
-
-UButton* UEOKeyInputWidget::MakeStyledButton(const FString& Text, float FontSize, const FLinearColor& Bg, const FLinearColor& Fg)
+UButton* UEOKeyInputWidget::MakeClassButton(const FString& Name, const FString& Desc, int32 Index)
 {
     UButton* Btn = NewObject<UButton>(this);
-    Btn->SetBackgroundColor(Bg);
-    Btn->SetVisibility(ESlateVisibility::Visible);
-    FButtonStyle BtnStyle = Btn->WidgetStyle;
-    BtnStyle.Normal.TintColor = Bg;
-    BtnStyle.Hovered.TintColor = Bg + FLinearColor(0.06f, 0.06f, 0.06f, 0.0f);
-    BtnStyle.Pressed.TintColor = Bg - FLinearColor(0.05f, 0.05f, 0.05f, 0.0f);
-    Btn->WidgetStyle = BtnStyle;
-    UTextBlock* Label = NewObject<UTextBlock>(this);
-    Label->SetText(FText::FromString(Text));
-    Label->SetFont(FSlateFontInfo(FPaths::EngineContentDir() / TEXT("Slate/Fonts/DroidSansFallback.ttf"), FontSize));
-    Label->SetColorAndOpacity(Fg);
-    Label->SetJustification(ETextJustify::Center);
-    Btn->SetContent(Label);
+    FButtonStyle BS = Btn->WidgetStyle;
+    BS.Normal.TintColor = FLinearColor(0.08f, 0.10f, 0.18f, 0.9f);
+    BS.Hovered.TintColor = FLinearColor(0.83f, 0.69f, 0.22f, 0.5f);
+    BS.Pressed.TintColor = FLinearColor(0.12f, 0.15f, 0.25f, 1.0f);
+    Btn->WidgetStyle = BS;
+
+    UVerticalBox* VBox = NewObject<UVerticalBox>(this);
+    UTextBlock* NameText = MakeText(Name, 26.0f, FLinearColor(0.95f, 0.85f, 0.55f, 1.0f));
+    if (UVerticalBoxSlot* NS = VBox->AddChildToVerticalBox(NameText))
+    {
+        NS->SetHorizontalAlignment(HAlign_Center);
+        NS->SetPadding(FMargin(0, 20, 0, 10));
+    }
+    UTextBlock* DescText = MakeText(Desc, 14.0f, FLinearColor(0.8f, 0.82f, 0.88f, 0.9f));
+    if (UVerticalBoxSlot* DS = VBox->AddChildToVerticalBox(DescText))
+    {
+        DS->SetHorizontalAlignment(HAlign_Center);
+        DS->SetPadding(FMargin(10, 5, 10, 20));
+    }
+    Btn->SetContent(VBox);
+    Btn->OnClicked.AddDynamic(this, &UEOKeyInputWidget::OnClassSelected);
+    Btn->SetPadding(FMargin(12, 12, 12, 12));
+
+    ClassButtons.Add(Btn);
+    ClassDescs.Add(NameText);
     return Btn;
+}
+
+void UEOKeyInputWidget::OnConfirmName()
+{
+    ShowState(1);
+}
+
+void UEOKeyInputWidget::OnClassSelected()
+{
+    // 选中职业，进入游戏
+    OnLoadingComplete.Broadcast();
 }
 
 UTextBlock* UEOKeyInputWidget::MakeText(const FString& Text, float Size, const FLinearColor& Color)
@@ -341,85 +260,6 @@ UTextBlock* UEOKeyInputWidget::MakeText(const FString& Text, float Size, const F
     T->SetText(FText::FromString(Text));
     T->SetFont(FSlateFontInfo(FPaths::EngineContentDir() / TEXT("Slate/Fonts/DroidSansFallback.ttf"), Size));
     T->SetColorAndOpacity(Color);
+    T->SetJustification(ETextJustify::Center);
     return T;
-}
-
-// ============================================================ 地球贴图
-
-UTexture2D* UEOKeyInputWidget::CreateEarthTexture()
-{
-    // 使用"圆形地球+亮星空"合成图（不透明，无透明黑圈问题）
-    const FString EarthPath = FPaths::Combine(FPaths::ProjectDir(), TEXT("Content/UI/earth_glow.png"));
-    if (FPaths::FileExists(EarthPath))
-    {
-        UTexture2D* Tex = FImageUtils::ImportFileAsTexture2D(EarthPath);
-        if (Tex) return Tex;
-    }
-    const FString FallbackPath = FPaths::Combine(FPaths::ProjectDir(), TEXT("Content/UI/earth_texture.png"));
-    if (FPaths::FileExists(FallbackPath))
-        return FImageUtils::ImportFileAsTexture2D(FallbackPath);
-    return nullptr;
-}
-
-void UEOKeyInputWidget::FillEarthPixels(TArray<FColor>& Pixels, int32 W, int32 H)
-{
-    static const struct { float cx, cy, rx, ry; } LandBlocks[] = {
-        { 0.16f, 0.30f, 0.20f, 0.18f },  // 北美
-        { 0.28f, 0.62f, 0.12f, 0.14f },  // 南美
-        { 0.55f, 0.26f, 0.34f, 0.18f },  // 欧亚
-        { 0.53f, 0.52f, 0.14f, 0.13f },  // 非洲
-        { 0.80f, 0.36f, 0.10f, 0.09f },  // 亚洲东南
-        { 0.86f, 0.70f, 0.08f, 0.07f },  // 澳洲
-        { 0.50f, 0.93f, 0.32f, 0.05f },  // 南极
-        { 0.68f, 0.45f, 0.08f, 0.08f },  // 印度
-    };
-    const int32 NumLand = sizeof(LandBlocks) / sizeof(LandBlocks[0]);
-
-    for (int32 y = 0; y < H; y++)
-    {
-        const float ny = y / (float)H;
-        for (int32 x = 0; x < W; x++)
-        {
-            const float nx = x / (float)W;
-            const int32 Idx = y * W + x;
-            float Polar = FMath::Abs(ny - 0.5f) * 2.0f;
-            FLinearColor Ocean(0.02f + 0.05f * Polar, 0.15f + 0.12f * Polar, 0.40f + 0.18f * (1.0f - Polar), 1.0f);
-            float LandMask = 0.0f;
-            for (int32 i = 0; i < NumLand; i++)
-            {
-                float dx = (nx - LandBlocks[i].cx) / LandBlocks[i].rx;
-                float dy = (ny - LandBlocks[i].cy) / LandBlocks[i].ry;
-                float Dist = FMath::Sqrt(dx * dx + dy * dy);
-                float Edge = FMath::Clamp(1.0f - Dist, 0.0f, 1.0f);
-                float Jitter = FMath::Sin(nx * 40.0f + ny * 33.0f + i * 7.0f) * 0.12f;
-                float Mask = FMath::Clamp(Edge - 0.55f + Jitter, 0.0f, 1.0f);
-                LandMask = FMath::Max(LandMask, Mask);
-            }
-            FLinearColor Land(0.16f + 0.10f * Polar, 0.45f - 0.10f * Polar, 0.20f - 0.06f * Polar, 1.0f);
-            FLinearColor Col = Ocean * (1.0f - LandMask) + Land * LandMask;
-            float CloudNoise = FMath::Frac(FMath::Sin(nx * 57.0f + ny * 41.0f) * 43758.5453f);
-            if (CloudNoise > 0.72f)
-            {
-                float CloudAlpha = FMath::Clamp((CloudNoise - 0.72f) / 0.28f, 0.0f, 1.0f) * 0.35f;
-                Col = Col * (1.0f - CloudAlpha) + FLinearColor(0.95f, 0.96f, 1.0f, 1.0f) * CloudAlpha;
-            }
-            Pixels[Idx] = Col.ToFColor(false);
-        }
-    }
-
-    // 圆形透明边缘：把矩形贴图裁成圆球（边缘外透明），旋转时不再是"正方形在转"
-    const float Cx = (W - 1) / 2.0f;
-    const float Cy = (H - 1) / 2.0f;
-    for (int32 y = 0; y < H; y++)
-    {
-        for (int32 x = 0; x < W; x++)
-        {
-            const float ncx = (x - Cx) / Cx;
-            const float ncy = (y - Cy) / Cy;
-            if (FMath::Sqrt(ncx * ncx + ncy * ncy) > 1.0f)
-            {
-                Pixels[y * W + x] = FColor(0, 0, 0, 0); // 透明
-            }
-        }
-    }
 }
