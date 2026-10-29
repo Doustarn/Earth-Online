@@ -94,6 +94,8 @@ void UEOHUDWidget::BuildMainHUD()
     BuildInteractionArea(MainCanvas);
     BuildTutorial(MainCanvas);
     BuildAlert(MainCanvas);
+    BuildCultivationBar(MainCanvas);
+    BuildSkillBar(MainCanvas);
 }
 
 void UEOHUDWidget::BuildActionArea(UCanvasPanel* Canvas)
@@ -911,4 +913,87 @@ void UEOHUDWidget::OnAlertBtn2Clicked()
 {
     HideAlert();
     ShowNotification(TEXT("选择：撤退"));
+}
+
+// ============================================================ 修仙 HUD
+
+void UEOHUDWidget::BuildCultivationBar(UCanvasPanel* Canvas)
+{
+    // 左下角：境界 + 等级 x/10 + 经验条 + 灵石
+    UVerticalBox* Box = NewObject<UVerticalBox>(this);
+    if (UCanvasPanelSlot* S = Canvas->AddChildToCanvas(Box))
+    {
+        S->SetAnchors(FAnchors(0.0f, 1.0f, 0.0f, 1.0f));
+        S->SetPosition(FVector2D(20.0f, -160.0f));
+        S->SetAutoSize(true);
+        S->SetZOrder(10);
+    }
+
+    // 境界名
+    RealmText = MakeText(TEXT("炼气期 · Qi Refining"), 18.0f, FLinearColor(0.95f, 0.85f, 0.55f, 1.0f));
+    Box->AddChildToVerticalBox(RealmText);
+
+    // 等级 x/10
+    LevelText = MakeText(TEXT("第 3 层 / 共 10 层"), 14.0f, FLinearColor(0.8f, 0.85f, 0.9f, 0.9f));
+    Box->AddChildToVerticalBox(LevelText);
+
+    // 经验条
+    ExpBar = NewObject<UProgressBar>(this);
+    ExpBar->SetPercent(0.3f);
+    ExpBar->SetFillColorAndOpacity(FLinearColor(0.83f, 0.69f, 0.22f, 1.0f));
+    ExpBar->SetBackgroundColor(FLinearColor(0.1f, 0.1f, 0.15f, 0.6f));
+    if (UVerticalBoxSlot* ES = Box->AddChildToVerticalBox(ExpBar))
+    {
+        USizeBox* Size = NewObject<USizeBox>(this);
+        Size->SetWidthOverride(280.0f);
+        Size->SetHeightOverride(12.0f);
+        Size->AddChild(ExpBar);
+        ES->SetHorizontalAlignment(HAlign_Fill);
+        ES->SetPadding(FMargin(0, 4, 0, 4));
+    }
+
+    // 灵石
+    SpiritStoneText = MakeText(TEXT("灵石: 128 下品"), 14.0f, FLinearColor(0.6f, 0.85f, 1.0f, 0.95f));
+    Box->AddChildToVerticalBox(SpiritStoneText);
+}
+
+void UEOHUDWidget::BuildSkillBar(UCanvasPanel* Canvas)
+{
+    // 右下角：Q/W/E/R 四个技能
+    UHorizontalBox* Row = NewObject<UHorizontalBox>(this);
+    if (UCanvasPanelSlot* S = Canvas->AddChildToCanvas(Row))
+    {
+        S->SetAnchors(FAnchors(1.0f, 1.0f, 1.0f, 1.0f));
+        S->SetPosition(FVector2D(-220.0f, -80.0f));
+        S->SetAutoSize(true);
+        S->SetZOrder(10);
+    }
+
+    const TCHAR* SkillKeys[] = { TEXT("Q"), TEXT("W"), TEXT("E"), TEXT("R") };
+    const TCHAR* SkillNames[] = { TEXT("普攻"), TEXT("御剑"), TEXT("万剑"), TEXT("闪避") };
+    for (int32 i = 0; i < 4; i++)
+    {
+        UButton* SkillBtn = NewObject<UButton>(this);
+        FButtonStyle BS = SkillBtn->WidgetStyle;
+        BS.Normal.TintColor = FLinearColor(0.08f, 0.10f, 0.18f, 0.85f);
+        BS.Hovered.TintColor = FLinearColor(0.83f, 0.69f, 0.22f, 0.5f);
+        BS.Pressed.TintColor = FLinearColor(0.2f, 0.25f, 0.4f, 1.0f);
+        SkillBtn->WidgetStyle = BS;
+
+        UVerticalBox* VB = NewObject<UVerticalBox>(this);
+        UTextBlock* KeyText = MakeText(FString(SkillKeys[i]), 16.0f, FLinearColor(1.0f, 0.9f, 0.6f, 1.0f));
+        KeyText->SetJustification(ETextJustify::Center);
+        VB->AddChildToVerticalBox(KeyText);
+        UTextBlock* NameText = MakeText(FString(SkillNames[i]), 11.0f, FLinearColor(0.8f, 0.82f, 0.88f, 0.9f));
+        NameText->SetJustification(ETextJustify::Center);
+        VB->AddChildToVerticalBox(NameText);
+        SkillBtn->SetContent(VB);
+        SkillBtn->SetPadding(FMargin(10, 8, 10, 8));
+
+        if (UHorizontalBoxSlot* HS = Row->AddChildToHorizontalBox(SkillBtn))
+        {
+            HS->SetPadding(FMargin(6, 0, 6, 0));
+        }
+        SkillButtons.Add(SkillBtn);
+    }
 }

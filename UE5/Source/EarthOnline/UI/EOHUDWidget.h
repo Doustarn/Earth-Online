@@ -49,6 +49,8 @@ protected:
     void BuildInteractionArea(UCanvasPanel* Canvas); // 中央交互提示
     void BuildTutorial(UCanvasPanel* Canvas);     // 新手教程
     void BuildAlert(UCanvasPanel* Canvas);        // 警报弹窗
+    void BuildCultivationBar(UCanvasPanel* Canvas); // 左下：修为境界+经验条+灵石
+    void BuildSkillBar(UCanvasPanel* Canvas);       // 右下：Q/W/E/R 技能栏
     void UpdateHUD(float DeltaTime);
     void UpdateJoystick(float DeltaTime);
     void UpdateInteraction(float DeltaTime);      // 检测对准交互物
@@ -192,6 +194,13 @@ protected:
 
     // 物品栏物品名
     TArray<FString> HotbarItems = { TEXT("草"), TEXT("土"), TEXT("石"), TEXT("木"), TEXT("板"), TEXT("台"), TEXT("炉"), TEXT("炬"), TEXT("麦") };
+
+    // 修仙 HUD
+    UPROPERTY() UTextBlock* RealmText;          // 境界名（炼气期等）
+    UPROPERTY() UTextBlock* LevelText;          // 等级 x/10
+    UPROPERTY() class UProgressBar* ExpBar;     // 经验条
+    UPROPERTY() UTextBlock* SpiritStoneText;    // 灵石数量
+    UPROPERTY() TArray<UButton*> SkillButtons;  // Q/W/E/R 技能按钮
 
     // —— 兼容旧 UMG 资产的绑定控件（保留原有逻辑）——
     UPROPERTY(meta = (BindWidget))
