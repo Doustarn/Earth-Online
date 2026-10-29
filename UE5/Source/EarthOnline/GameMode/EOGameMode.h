@@ -31,4 +31,6 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "游戏")
     int32 GetCurrentPlayerCount();
+
+    void SpawnEnemies();   // 在世界里生成野外怪物（山贼/妖兽/邪修）
 };
