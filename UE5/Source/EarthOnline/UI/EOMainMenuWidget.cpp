@@ -119,6 +119,16 @@ void UEOMainMenuWidget::BuildTitle()
         S->SetAutoSize(true);
         S->SetZOrder(5);
     }
+
+    // 版本号
+    UTextBlock* Ver = MakeText(TEXT("v0.1.8.1.1001 Alpha"), 13.0f, FLinearColor(0.5f, 0.55f, 0.6f, 0.7f));
+    if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(Ver))
+    {
+        S->SetAnchors(FAnchors(0.5f, 0.46f, 0.5f, 0.46f));
+        S->SetAlignment(FVector2D(0.5f, 0.5f));
+        S->SetAutoSize(true);
+        S->SetZOrder(5);
+    }
 }
 
 void UEOMainMenuWidget::BuildCenterButtons()
