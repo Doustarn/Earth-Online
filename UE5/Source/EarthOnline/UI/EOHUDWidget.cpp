@@ -964,7 +964,7 @@ void UEOHUDWidget::BuildSkillBar(UCanvasPanel* Canvas)
     if (UCanvasPanelSlot* S = Canvas->AddChildToCanvas(Row))
     {
         S->SetAnchors(FAnchors(1.0f, 1.0f, 1.0f, 1.0f));
-        S->SetPosition(FVector2D(-220.0f, -80.0f));
+        S->SetPosition(FVector2D(-260.0f, -140.0f));
         S->SetAutoSize(true);
         S->SetZOrder(10);
     }
