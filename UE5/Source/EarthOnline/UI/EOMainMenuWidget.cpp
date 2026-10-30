@@ -1,4 +1,5 @@
 #include "EOMainMenuWidget.h"
+#include "../Utils/EOLang.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
@@ -18,6 +19,7 @@
 bool UEOMainMenuWidget::Initialize()
 {
     if (!Super::Initialize()) return false;
+    UEOLang::LoadLang();
     BuildUI();
     return true;
 }
@@ -95,7 +97,7 @@ void UEOMainMenuWidget::BuildTitle()
     }
 
     // 中文副标题
-    UTextBlock* Sub = MakeText(TEXT("仙 途 · 修 仙 在 线"), 22.0f, FLinearColor(0.7f, 0.75f, 0.85f, 0.9f));
+    UTextBlock* Sub = MakeText(UEOLang::T(TEXT("仙 途 · 修 仙 在 线"), TEXT("Xianxia Online")), 22.0f, FLinearColor(0.7f, 0.75f, 0.85f, 0.9f));
     if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(Sub))
     {
         S->SetAnchors(FAnchors(0.5f, 0.42f, 0.5f, 0.42f));
@@ -136,7 +138,7 @@ void UEOMainMenuWidget::BuildCenterButtons()
     if (UHorizontalBoxSlot* ES = LangRow->AddChildToHorizontalBox(BtnEN)) ES->SetPadding(FMargin(6.0f, 0.0f, 6.0f, 0.0f));
 
     // 主按钮：开始游戏
-    StartButton = MakeBlackMythButton(TEXT("开 始 游 戏  /  START"), true);
+    StartButton = MakeBlackMythButton(UEOLang::T(TEXT("开 始 游 戏"), TEXT("START GAME")), true);
     StartButton->OnClicked.AddDynamic(this, &UEOMainMenuWidget::OnStartClicked);
     if (UVerticalBoxSlot* BS = Menu->AddChildToVerticalBox(StartButton))
     {
