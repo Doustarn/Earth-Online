@@ -929,17 +929,27 @@ void UEOHUDWidget::BuildCultivationBar(UCanvasPanel* Canvas)
         S->SetZOrder(10);
     }
 
-    // 境界名
-    RealmText = MakeText(TEXT("炼气期 · Qi Refining"), 18.0f, FLinearColor(0.30f, 0.90f, 1.0f, 1.0f));
+    // 随机开局境界（80%炼气/15%筑基/5%金丹）
+    FRandomStream Rng(FDateTime::Now().GetTicks());
+    const TCHAR* RealmCN[] = { TEXT("炼气期"), TEXT("筑基期"), TEXT("金丹期") };
+    const TCHAR* RealmEN[] = { TEXT("Qi Refining"), TEXT("Foundation"), TEXT("Core Formation") };
+    int32 Roll = Rng.RandRange(0, 99);
+    int32 RealmIdx = Roll < 60 ? 0 : (Roll < 95 ? 1 : 2);
+    int32 Level = Rng.RandRange(1, 10);
+    float ExpPct = Rng.FRand();
+    int32 Stones = Rng.RandRange(10, 500);
+
+    FString RealmStr = FString::Printf(TEXT("%s · %s"), RealmCN[RealmIdx], RealmEN[RealmIdx]);
+    RealmText = MakeText(RealmStr, 18.0f, FLinearColor(0.30f, 0.90f, 1.0f, 1.0f));
     if (UVerticalBoxSlot* RS = Box->AddChildToVerticalBox(RealmText)) RS->SetPadding(FMargin(0, 0, 0, 2));
 
-    // 等级 x/10
-    LevelText = MakeText(TEXT("第 3 层 / 共 10 层"), 14.0f, FLinearColor(0.8f, 0.85f, 0.9f, 0.9f));
+    FString LevelStr = FString::Printf(TEXT("第 %d 层 / 共 10 层"), Level);
+    LevelText = MakeText(LevelStr, 14.0f, FLinearColor(0.8f, 0.85f, 0.9f, 0.9f));
     if (UVerticalBoxSlot* LS = Box->AddChildToVerticalBox(LevelText)) LS->SetPadding(FMargin(0, 0, 0, 4));
 
     // 经验条
     ExpBar = NewObject<UProgressBar>(this);
-    ExpBar->SetPercent(0.3f);
+    ExpBar->SetPercent(ExpPct);
     ExpBar->SetFillColorAndOpacity(FLinearColor(0.15f, 0.75f, 0.85f, 1.0f));
     ExpBar->SetBackgroundColor(FLinearColor(0.1f, 0.1f, 0.15f, 0.6f));
     USizeBox* ExpSize = NewObject<USizeBox>(this);
@@ -952,8 +962,8 @@ void UEOHUDWidget::BuildCultivationBar(UCanvasPanel* Canvas)
         ES->SetPadding(FMargin(0, 4, 0, 4));
     }
 
-    // 灵石
-    SpiritStoneText = MakeText(TEXT("灵石: 128 下品"), 14.0f, FLinearColor(0.6f, 0.85f, 1.0f, 0.95f));
+    FString StoneStr = FString::Printf(TEXT("灵石: %d 下品"), Stones);
+    SpiritStoneText = MakeText(StoneStr, 14.0f, FLinearColor(0.6f, 0.85f, 1.0f, 0.95f));
     Box->AddChildToVerticalBox(SpiritStoneText);
 }
 
@@ -989,11 +999,26 @@ void UEOHUDWidget::BuildSkillBar(UCanvasPanel* Canvas)
         VB->AddChildToVerticalBox(NameText);
         SkillBtn->SetContent(VB);
         SkillBtn->SetPadding(FMargin(10, 8, 10, 8));
+        SkillBtn->SetTag(FName(SkillNames[i]));
+        SkillBtn->OnClicked.AddDynamic(this, &UEOHUDWidget::OnSkillClicked);
 
         if (UHorizontalBoxSlot* HS = Row->AddChildToHorizontalBox(SkillBtn))
         {
             HS->SetPadding(FMargin(6, 0, 6, 0));
         }
         SkillButtons.Add(SkillBtn);
+    }
+}
+
+void UEOHUDWidget::OnSkillClicked()
+{
+    // 找到 sender 按钮显示技能名
+    for (UButton* Btn : SkillButtons)
+    {
+        if (Btn && Btn->IsHovered())
+        {
+            ShowNotification(FString::Printf(TEXT("施展: %s"), *Btn->Tag.ToString()));
+            return;
+        }
     }
 }

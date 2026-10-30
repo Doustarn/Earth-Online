@@ -96,6 +96,9 @@ protected:
     UFUNCTION()
     void OnAlertBtn2Clicked();
 
+    UFUNCTION()
+    void OnSkillClicked();
+
     // —— 动态UI控件 ——
     UPROPERTY()
     UCanvasPanel* MainCanvas;
