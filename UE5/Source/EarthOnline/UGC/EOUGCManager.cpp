@@ -1,4 +1,4 @@
-// 地球Online - UGC玩家自建内容管理器实现
+﻿// Immortal Dao Online - UGC玩家自建内容管理器实现
 #include "EOUGCManager.h"
 #include "Misc/Paths.h"
 #include "HAL/FileManager.h"

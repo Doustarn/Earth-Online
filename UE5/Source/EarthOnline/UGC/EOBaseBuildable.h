@@ -1,4 +1,4 @@
-// 地球Online - 可建造物体基类
+﻿// Immortal Dao Online - 可建造物体基类
 #pragma once
 
 #include "CoreMinimal.h"

@@ -1,4 +1,4 @@
-#include "EOGameInstance.h"
+﻿#include "EOGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/Engine.h"
 
@@ -13,7 +13,7 @@ UEOGameInstance::UEOGameInstance()
 void UEOGameInstance::Init()
 {
     Super::Init();
-    UE_LOG(LogTemp, Log, TEXT("地球Online GameInstance 初始化 - 内测模式: %s"), bIsBetaMode ? TEXT("是") : TEXT("否"));
+    UE_LOG(LogTemp, Log, TEXT("Immortal Dao Online GameInstance 初始化 - 内测模式: %s"), bIsBetaMode ? TEXT("是") : TEXT("否"));
 }
 
 void UEOGameInstance::JoinServer(const FString& Address, int32 Port)

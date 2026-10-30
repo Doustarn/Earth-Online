@@ -1,4 +1,4 @@
-#include "EOPlayerController.h"
+﻿#include "EOPlayerController.h"
 #include "../HUD/EOHUD.h"
 #include "../UI/EOHUDWidget.h"
 #include "../UGC/EOBuilderComponent.h"
@@ -116,11 +116,11 @@ void AEOPlayerController::OnToggleMouseLock()
 
 void AEOPlayerController::Client_ShowWelcomeMessage_Implementation(const FString& Version)
 {
-    UE_LOG(LogTemp, Log, TEXT("欢迎来到地球Online！版本: %s"), *Version);
+    UE_LOG(LogTemp, Log, TEXT("欢迎来到Immortal Dao Online！版本: %s"), *Version);
 
     if (AEOHUD* HUD = Cast<AEOHUD>(GetHUD()))
     {
-        HUD->ShowNotification(FString::Printf(TEXT("欢迎来到地球Online内测版 v%s"), *Version));
+        HUD->ShowNotification(FString::Printf(TEXT("欢迎来到Immortal Dao Online内测版 v%s"), *Version));
     }
 }
 

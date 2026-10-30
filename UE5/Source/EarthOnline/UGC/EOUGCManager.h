@@ -1,4 +1,4 @@
-// 地球Online - UGC玩家自建内容管理器
+﻿// Immortal Dao Online - UGC玩家自建内容管理器
 // 支持玩家自建地图、建模、保存/加载
 #pragma once
 

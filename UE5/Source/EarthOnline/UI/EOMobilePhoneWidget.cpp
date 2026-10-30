@@ -1,4 +1,4 @@
-#include "EOMobilePhoneWidget.h"
+﻿#include "EOMobilePhoneWidget.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/Border.h"
@@ -454,7 +454,7 @@ void UEOMobilePhoneWidget::HandleAppShop()
 
 void UEOMobilePhoneWidget::HandleAppAbout()
 {
-    if (PageTitle) PageTitle->SetText(FText::FromString(TEXT("关于\n地球Online v0.2.0\n逗星科技")));
+    if (PageTitle) PageTitle->SetText(FText::FromString(TEXT("关于\nImmortal Dao Online v0.2.0\n逗星科技")));
 }
 
 void UEOMobilePhoneWidget::HandleNavHome()

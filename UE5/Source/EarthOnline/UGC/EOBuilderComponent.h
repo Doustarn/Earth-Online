@@ -1,4 +1,4 @@
-// 地球Online - 玩家建造组件
+﻿// Immortal Dao Online - 玩家建造组件
 // 支持放置、移动、旋转、缩放物体
 #pragma once
 

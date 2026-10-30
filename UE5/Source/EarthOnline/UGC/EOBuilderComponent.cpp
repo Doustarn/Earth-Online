@@ -1,4 +1,4 @@
-// 地球Online - 玩家建造组件实现
+﻿// Immortal Dao Online - 玩家建造组件实现
 #include "EOBuilderComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "Engine/World.h"

@@ -1,4 +1,4 @@
-// 地球Online - 可建造物体基类实现
+﻿// Immortal Dao Online - 可建造物体基类实现
 #include "EOBaseBuildable.h"
 #include "Components/StaticMeshComponent.h"
 

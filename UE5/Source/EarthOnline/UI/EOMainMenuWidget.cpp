@@ -85,7 +85,7 @@ void UEOMainMenuWidget::BuildBackground()
 void UEOMainMenuWidget::BuildTitle()
 {
     // 大标题 Immortal Dao Online
-    UTextBlock* Title = MakeText(TEXT("IMMORTAL DAO ONLINE"), 52.0f, FLinearColor(0.95f, 0.85f, 0.55f, 1.0f));
+    UTextBlock* Title = MakeText(TEXT("IMMORTAL DAO ONLINE"), 52.0f, FLinearColor(0.30f, 0.90f, 1.0f, 1.0f));
     if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(Title))
     {
         S->SetAnchors(FAnchors(0.5f, 0.35f, 0.5f, 0.35f));
@@ -203,14 +203,14 @@ UButton* UEOMainMenuWidget::MakeBlackMythButton(const FString& Text, bool bPrima
     FButtonStyle BtnStyle = Btn->WidgetStyle;
     if (bPrimary)
     {
-        BtnStyle.Normal.TintColor = FLinearColor(0.83f, 0.69f, 0.22f, 0.92f);
-        BtnStyle.Hovered.TintColor = FLinearColor(1.0f, 0.86f, 0.42f, 1.0f);
-        BtnStyle.Pressed.TintColor = FLinearColor(0.70f, 0.55f, 0.15f, 1.0f);
+        BtnStyle.Normal.TintColor = FLinearColor(0.15f, 0.75f, 0.85f, 0.92f);
+        BtnStyle.Hovered.TintColor = FLinearColor(0.30f, 0.92f, 1.0f, 1.0f);
+        BtnStyle.Pressed.TintColor = FLinearColor(0.10f, 0.60f, 0.70f, 1.0f);
     }
     else
     {
         BtnStyle.Normal.TintColor = FLinearColor(0.05f, 0.05f, 0.08f, 0.55f);
-        BtnStyle.Hovered.TintColor = FLinearColor(0.83f, 0.69f, 0.22f, 0.35f);
+        BtnStyle.Hovered.TintColor = FLinearColor(0.15f, 0.75f, 0.85f, 0.35f);
         BtnStyle.Pressed.TintColor = FLinearColor(0.05f, 0.05f, 0.08f, 0.85f);
     }
     Btn->WidgetStyle = BtnStyle;
@@ -218,7 +218,7 @@ UButton* UEOMainMenuWidget::MakeBlackMythButton(const FString& Text, bool bPrima
     UTextBlock* Label = NewObject<UTextBlock>(this);
     Label->SetText(FText::FromString(Text));
     Label->SetFont(FSlateFontInfo(FPaths::EngineContentDir() / TEXT("Slate/Fonts/DroidSansFallback.ttf"), bPrimary ? 28 : 18));
-    Label->SetColorAndOpacity(bPrimary ? FLinearColor(0.12f, 0.08f, 0.02f, 1.0f) : FLinearColor(0.92f, 0.92f, 0.94f, 0.95f));
+    Label->SetColorAndOpacity(bPrimary ? FLinearColor(0.02f, 0.08f, 0.10f, 1.0f) : FLinearColor(0.92f, 0.92f, 0.94f, 1.0f));
     Label->SetJustification(ETextJustify::Center);
     Btn->SetContent(Label);
 

@@ -1,4 +1,4 @@
-// 地球Online - 基础几何体（立方体/球体/平面/圆柱体）
+﻿// Immortal Dao Online - 基础几何体（立方体/球体/平面/圆柱体）
 #pragma once
 
 #include "CoreMinimal.h"

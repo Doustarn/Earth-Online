@@ -1,4 +1,4 @@
-// 地球Online - 基础几何体实现
+﻿// Immortal Dao Online - 基础几何体实现
 #include "EOBasicShapes.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
