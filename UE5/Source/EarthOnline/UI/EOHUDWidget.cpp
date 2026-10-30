@@ -931,11 +931,11 @@ void UEOHUDWidget::BuildCultivationBar(UCanvasPanel* Canvas)
 
     // 境界名
     RealmText = MakeText(TEXT("炼气期 · Qi Refining"), 18.0f, FLinearColor(0.30f, 0.90f, 1.0f, 1.0f));
-    Box->AddChildToVerticalBox(RealmText);
+    if (UVerticalBoxSlot* RS = Box->AddChildToVerticalBox(RealmText)) RS->SetPadding(FMargin(0, 0, 0, 2));
 
     // 等级 x/10
     LevelText = MakeText(TEXT("第 3 层 / 共 10 层"), 14.0f, FLinearColor(0.8f, 0.85f, 0.9f, 0.9f));
-    Box->AddChildToVerticalBox(LevelText);
+    if (UVerticalBoxSlot* LS = Box->AddChildToVerticalBox(LevelText)) LS->SetPadding(FMargin(0, 0, 0, 4));
 
     // 经验条
     ExpBar = NewObject<UProgressBar>(this);

@@ -148,12 +148,13 @@ void UEOKeyInputWidget::ShowIdentityState()
         S->SetZOrder(5);
     }
 
-    // 3秒后进职业选择
+    // 3秒后进职业选择（WeakObjectPtr 防止 widget 销毁后野指针）
     if (UWorld* W = GetWorld())
     {
-        W->GetTimerManager().SetTimer(IdentityTimer, [this]()
+        TWeakObjectPtr<UEOKeyInputWidget> WeakThis(this);
+        W->GetTimerManager().SetTimer(IdentityTimer, [WeakThis]()
         {
-            ShowState(2);
+            if (WeakThis.IsValid()) WeakThis->ShowState(2);
         }, 3.0f, false);
     }
 }
