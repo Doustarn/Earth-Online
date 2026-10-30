@@ -1,6 +1,6 @@
 # Immortal Dao Online
 
-[中文文档](./README.zh-CN.md)
+[中文站 (Gitee)](https://gitee.com/Doustar/Immortal-Dao-Online)
 
 A large-scale open-world **Xianxia (cultivation) MMORPG** built on **Unreal Engine 5.8**.
 No fixed storyline, no forced quests — you start as a random cultivator and rise through 21 major realms toward transcendence.
@@ -55,10 +55,48 @@ Immortal-Dao-Online/
 3. Right-click `EarthOnline.uproject` → **Generate Visual Studio project files**
 4. Open the `.sln`, build **Development Editor**, hit Play
 
+## 🚀 Building from Source (Packaging)
+
+To build a standalone Windows client yourself:
+
+1. Install **Unreal Engine 5.8.1** from Epic Games Launcher
+2. Clone this repo and open `EarthOnline.uproject` in the UE editor
+3. Wait for shader compilation, then go to **File → Package Project → Windows → Windows (64-bit)**
+4. Choose an output folder (e.g. `UE5/Packaged/`)
+5. After packaging, run `EarthOnline.exe` from the output folder
+
+> **Note**: You need Visual Studio 2022 with the "Game development with C++" workload installed to compile the C++ source.
+
+## 📦 v0.1.8.1.1001 (Alpha) — What's Inside
+
+This first alpha build includes:
+
+- **Cyan-themed main menu** with language selector (简体中文 / English)
+- **Login flow**: enter your Dao name → random NPC identity reveal → choose your path (5 classes: Sword / Spear / Mage / Alchemist / Talisman)
+- **In-game HUD**: cultivation realm + level + EXP bar + spirit stones (bottom-left), Q/W/E/R skill bar (bottom-right), 9-slot hotbar
+- **Open-world enemies**: 8 random bandit / demon / rogue cultivators spawn around the player
+- **Offline decay system**: 1 year inactivity drops realms (low: -3, high: -2, floor at Qi Refining)
+- **Bilingual UI**: Simplified Chinese or English, selectable at main menu
+
+Known issues: no combat yet, enemies are visual-only cubes, no saving, no networking.
+
 ## 📦 Releases
 
-Prebuilt Windows clients are published on the
-[Releases](https://github.com/Doustarn/Immortal-Dao-Online/releases) page.
+### v0.1.8.1.1001 (Alpha)
+
+- Main menu: starfield backdrop, cyan theme, CN/EN language toggle
+- Login flow: enter Dao name → random NPC identity reveal → choose 1 of 5 classes (Sword / Spear / Mage / Alchemist / Talisman)
+- In-game HUD: realm bar (randomized on spawn), Q/W/E/R skill bar, 9-slot hotbar
+- World: 8 enemies (bandits / beasts / rogue cultivators) spawn around player
+- Offline decay: 1-year absence drops low realms by 3, high realms by 2
+
+### Build from source
+
+1. Install **Unreal Engine 5.8.1** from Epic Games Launcher
+2. Clone this repo
+3. Right-click `EarthOnline.uproject` → **Generate Visual Studio project files**
+4. Open `EarthOnline.sln`, set config to **Development Editor**, build
+5. Press **Play** in the editor
 
 > **Hackm note**: This is an early alpha — bugs are expected and feedback is welcome!
 

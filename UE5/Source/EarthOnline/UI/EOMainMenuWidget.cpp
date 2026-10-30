@@ -179,7 +179,7 @@ void UEOMainMenuWidget::BuildTopBar()
 
 void UEOMainMenuWidget::BuildBottomBar()
 {
-    FlavorText = MakeText(UEOLang::T(TEXT("Immortal Dao Online · 大型修仙开放世界"), TEXT("Immortal Dao Online · Open World Xianxia MMORPG")), 13.0f, FLinearColor(0.65f, 0.7f, 0.75f, 0.9f));
+    FlavorText = MakeText(TEXT("Immortal Dao Online · 大型修仙开放世界"), 13.0f, FLinearColor(0.65f, 0.7f, 0.75f, 0.9f));
     if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(FlavorText))
     {
         S->SetAnchors(FAnchors(0.5f, 1.0f, 0.5f, 1.0f));

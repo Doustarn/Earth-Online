@@ -84,7 +84,7 @@ void UEOKeyInputWidget::ShowLoginState()
         S->SetZOrder(5);
     }
 
-    UTextBlock* Sub = MakeText(UEOLang::T(TEXT("请输入你的道号"), TEXT("Enter your Dao Name")), 20.0f, FLinearColor(0.7f, 0.75f, 0.85f, 0.9f));
+    UTextBlock* Sub = MakeText(TEXT("请输入你的道号"), 20.0f, FLinearColor(0.7f, 0.75f, 0.85f, 0.9f));
     if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(Sub))
     {
         S->SetAnchors(FAnchors(0.5f, 0.45f, 0.5f, 0.45f));
@@ -95,7 +95,7 @@ void UEOKeyInputWidget::ShowLoginState()
 
     // 输入框
     NameInput = NewObject<UEditableTextBox>(this);
-    NameInput->SetHintText(FText::FromString(UEOLang::T(TEXT("输入道号..."), TEXT("Enter Dao Name..."))));
+    NameInput->SetHintText(FText::FromString(TEXT("输入道号...")));
     if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(NameInput))
     {
         S->SetAnchors(FAnchors(0.5f, 0.52f, 0.5f, 0.52f));
@@ -111,7 +111,7 @@ void UEOKeyInputWidget::ShowLoginState()
     BS.Pressed.TintColor = FLinearColor(0.10f, 0.60f, 0.70f, 1.0f);
     ConfirmNameBtn->WidgetStyle = BS;
     UTextBlock* BtnLabel = NewObject<UTextBlock>(this);
-    BtnLabel->SetText(FText::FromString(UEOLang::T(TEXT("进 入 仙 途"), TEXT("ENTER"))));
+    BtnLabel->SetText(FText::FromString(TEXT("进 入 仙 途")));
     BtnLabel->SetFont(FSlateFontInfo(FPaths::EngineContentDir() / TEXT("Slate/Fonts/DroidSansFallback.ttf"), 22));
     BtnLabel->SetColorAndOpacity(FLinearColor(0.02f, 0.08f, 0.10f, 1.0f));
     BtnLabel->SetJustification(ETextJustify::Center);
@@ -140,7 +140,7 @@ void UEOKeyInputWidget::ShowIdentityState()
         S->SetZOrder(5);
     }
 
-    IdentitySub = MakeText(UEOLang::T(TEXT("前世记忆觉醒中..."), TEXT("Awakening past life...")), 16.0f, FLinearColor(0.6f, 0.65f, 0.75f, 0.8f));
+    IdentitySub = MakeText(TEXT("前世记忆觉醒中..."), 16.0f, FLinearColor(0.6f, 0.65f, 0.75f, 0.8f));
     if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(IdentitySub))
     {
         S->SetAnchors(FAnchors(0.5f, 0.5f, 0.5f, 0.5f));
@@ -162,7 +162,7 @@ void UEOKeyInputWidget::ShowIdentityState()
 
 void UEOKeyInputWidget::ShowClassState()
 {
-    UTextBlock* Title = MakeText(UEOLang::T(TEXT("选择你的修仙之路"), TEXT("Choose Your Path")), 32.0f, FLinearColor(0.30f, 0.90f, 1.0f, 1.0f));
+    UTextBlock* Title = MakeText(TEXT("选择你的修仙之路"), 32.0f, FLinearColor(0.30f, 0.90f, 1.0f, 1.0f));
     if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(Title))
     {
         S->SetAnchors(FAnchors(0.5f, 0.15f, 0.5f, 0.15f));
