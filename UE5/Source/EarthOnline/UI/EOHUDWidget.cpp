@@ -940,14 +940,14 @@ void UEOHUDWidget::BuildCultivationBar(UCanvasPanel* Canvas)
     // 经验条
     ExpBar = NewObject<UProgressBar>(this);
     ExpBar->SetPercent(0.3f);
-    ExpBar->SetFillColorAndOpacity(FLinearColor(0.83f, 0.69f, 0.22f, 1.0f));
+    ExpBar->SetFillColorAndOpacity(FLinearColor(0.15f, 0.75f, 0.85f, 1.0f));
     ExpBar->SetBackgroundColor(FLinearColor(0.1f, 0.1f, 0.15f, 0.6f));
-    if (UVerticalBoxSlot* ES = Box->AddChildToVerticalBox(ExpBar))
+    USizeBox* ExpSize = NewObject<USizeBox>(this);
+    ExpSize->SetWidthOverride(280.0f);
+    ExpSize->SetHeightOverride(12.0f);
+    ExpSize->AddChild(ExpBar);
+    if (UVerticalBoxSlot* ES = Box->AddChildToVerticalBox(ExpSize))
     {
-        USizeBox* Size = NewObject<USizeBox>(this);
-        Size->SetWidthOverride(280.0f);
-        Size->SetHeightOverride(12.0f);
-        Size->AddChild(ExpBar);
         ES->SetHorizontalAlignment(HAlign_Fill);
         ES->SetPadding(FMargin(0, 4, 0, 4));
     }
@@ -976,7 +976,7 @@ void UEOHUDWidget::BuildSkillBar(UCanvasPanel* Canvas)
         UButton* SkillBtn = NewObject<UButton>(this);
         FButtonStyle BS = SkillBtn->WidgetStyle;
         BS.Normal.TintColor = FLinearColor(0.08f, 0.10f, 0.18f, 0.85f);
-        BS.Hovered.TintColor = FLinearColor(0.83f, 0.69f, 0.22f, 0.5f);
+        BS.Hovered.TintColor = FLinearColor(0.15f, 0.75f, 0.85f, 0.5f);
         BS.Pressed.TintColor = FLinearColor(0.2f, 0.25f, 0.4f, 1.0f);
         SkillBtn->WidgetStyle = BS;
 
