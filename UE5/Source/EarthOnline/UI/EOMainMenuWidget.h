@@ -60,4 +60,10 @@ protected:
 
     UFUNCTION()
     void OnIconClicked();
+
+    UFUNCTION()
+    void OnLangCNClicked();
+
+    UFUNCTION()
+    void OnLangENClicked();
 };

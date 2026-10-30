@@ -50,6 +50,18 @@ void UEOMainMenuWidget::OnIconClicked()
     }
 }
 
+void UEOMainMenuWidget::OnLangCNClicked()
+{
+    UEOLang::SaveLang(0);
+    if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor(0.3f, 0.9f, 1.0f), TEXT("语言：简体中文"));
+}
+
+void UEOMainMenuWidget::OnLangENClicked()
+{
+    UEOLang::SaveLang(1);
+    if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor(0.3f, 0.9f, 1.0f), TEXT("Language: English"));
+}
+
 // ============================================================ 构建
 
 void UEOMainMenuWidget::BuildUI()
@@ -135,8 +147,10 @@ void UEOMainMenuWidget::BuildCenterButtons()
         LRS->SetPadding(FMargin(0.0f, 0.0f, 0.0f, 20.0f));
     }
     UButton* BtnCN = MakeStyledButton(TEXT("简体中文"), 16.0f, FLinearColor(0.15f, 0.2f, 0.3f, 0.8f), FLinearColor(1.0f, 0.95f, 0.7f, 1.0f));
+    BtnCN->OnClicked.AddDynamic(this, &UEOMainMenuWidget::OnLangCNClicked);
     if (UHorizontalBoxSlot* CS = LangRow->AddChildToHorizontalBox(BtnCN)) CS->SetPadding(FMargin(6.0f, 0.0f, 6.0f, 0.0f));
     UButton* BtnEN = MakeStyledButton(TEXT("English"), 16.0f, FLinearColor(0.15f, 0.2f, 0.3f, 0.8f), FLinearColor(0.9f, 0.95f, 1.0f, 1.0f));
+    BtnEN->OnClicked.AddDynamic(this, &UEOMainMenuWidget::OnLangENClicked);
     if (UHorizontalBoxSlot* ES = LangRow->AddChildToHorizontalBox(BtnEN)) ES->SetPadding(FMargin(6.0f, 0.0f, 6.0f, 0.0f));
 
     // 主按钮：开始游戏

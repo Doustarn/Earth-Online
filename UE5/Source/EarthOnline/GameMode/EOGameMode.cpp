@@ -76,11 +76,12 @@ void AEOGameMode::SpawnEnemies()
         {
             UStaticMeshComponent* Mesh = NewObject<UStaticMeshComponent>(Enemy);
             Mesh->SetStaticMesh(CubeMesh);
-            Mesh->SetWorldScale3D(FVector(0.8f, 0.8f, 1.5f));
             Mesh->SetMaterial(0, LoadObject<UMaterial>(nullptr, TEXT("/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial")));
-            Mesh->SetVectorParameterValueOnMaterials(TEXT("Color"), FVector(Colors[Type].R, Colors[Type].G, Colors[Type].B));
-            Mesh->RegisterComponent();
             Enemy->SetRootComponent(Mesh);
+            Mesh->RegisterComponent();
+            Mesh->SetWorldScale3D(FVector(0.8f, 0.8f, 1.5f));
+            Mesh->SetWorldLocation(Loc);
+            Mesh->SetVectorParameterValueOnMaterials(TEXT("Color"), FVector(Colors[Type].R, Colors[Type].G, Colors[Type].B));
 
             const TCHAR* Names[3] = { TEXT("山贼"), TEXT("妖兽"), TEXT("邪修") };
             Enemy->SetActorLabel(FString::Printf(TEXT("%s_%d"), Names[Type], i));
