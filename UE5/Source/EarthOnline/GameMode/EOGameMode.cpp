@@ -4,6 +4,7 @@
 #include "../HUD/EOHUD.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
+#include "Materials/Material.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "GenericPlatform/GenericPlatformFile.h"

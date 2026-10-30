@@ -930,7 +930,7 @@ void UEOHUDWidget::BuildCultivationBar(UCanvasPanel* Canvas)
     }
 
     // 境界名
-    RealmText = MakeText(TEXT("炼气期 · Qi Refining"), 18.0f, FLinearColor(0.95f, 0.85f, 0.55f, 1.0f));
+    RealmText = MakeText(TEXT("炼气期 · Qi Refining"), 18.0f, FLinearColor(0.30f, 0.90f, 1.0f, 1.0f));
     Box->AddChildToVerticalBox(RealmText);
 
     // 等级 x/10

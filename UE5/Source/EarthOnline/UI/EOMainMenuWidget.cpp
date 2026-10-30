@@ -15,6 +15,8 @@
 #include "ImageUtils.h"
 #include "Engine/Engine.h"
 #include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
+#include "Styling/CoreStyle.h"
 
 bool UEOMainMenuWidget::Initialize()
 {

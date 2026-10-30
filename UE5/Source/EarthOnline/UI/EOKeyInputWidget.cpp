@@ -1,4 +1,4 @@
-#include "EOKeyInputWidget.h"
+﻿#include "EOKeyInputWidget.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
@@ -12,6 +12,8 @@
 #include "Components/HorizontalBoxSlot.h"
 #include "Components/SizeBox.h"
 #include "Engine/Engine.h"
+#include "Misc/Paths.h"
+#include "Styling/CoreStyle.h"
 
 bool UEOKeyInputWidget::Initialize()
 {
@@ -49,12 +51,16 @@ void UEOKeyInputWidget::ShowState(int32 NewState)
     GameState = NewState;
     if (MainCanvas)
     {
-        // 清掉旧的动态子控件（保留背景）
+        // 清掉旧的动态子控件（保留背景 ZOrder=0）
         TArray<UWidget*> ToRemove;
         for (int32 i = 0; i < MainCanvas->GetChildrenCount(); i++)
         {
             UWidget* Child = MainCanvas->GetChildAt(i);
-            if (Child && Child->GetZOrder() > 0) ToRemove.Add(Child);
+            if (!Child) continue;
+            if (UCanvasPanelSlot* CPS = Cast<UCanvasPanelSlot>(Child->Slot))
+            {
+                if (CPS->GetZOrder() > 0) ToRemove.Add(Child);
+            }
         }
         for (UWidget* W : ToRemove) MainCanvas->RemoveChild(W);
     }
@@ -68,7 +74,7 @@ void UEOKeyInputWidget::ShowState(int32 NewState)
 
 void UEOKeyInputWidget::ShowLoginState()
 {
-    UTextBlock* Title = MakeText(TEXT("IMMORTAL DAO ONLINE"), 40.0f, FLinearColor(0.95f, 0.85f, 0.55f, 1.0f));
+    UTextBlock* Title = MakeText(TEXT("IMMORTAL DAO ONLINE"), 40.0f, FLinearColor(0.30f, 0.90f, 1.0f, 1.0f));
     if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(Title))
     {
         S->SetAnchors(FAnchors(0.5f, 0.3f, 0.5f, 0.3f));
@@ -99,14 +105,14 @@ void UEOKeyInputWidget::ShowLoginState()
 
     ConfirmNameBtn = NewObject<UButton>(this);
     FButtonStyle BS = ConfirmNameBtn->WidgetStyle;
-    BS.Normal.TintColor = FLinearColor(0.83f, 0.69f, 0.22f, 0.92f);
-    BS.Hovered.TintColor = FLinearColor(1.0f, 0.86f, 0.42f, 1.0f);
-    BS.Pressed.TintColor = FLinearColor(0.70f, 0.55f, 0.15f, 1.0f);
+    BS.Normal.TintColor = FLinearColor(0.15f, 0.75f, 0.85f, 0.92f);
+    BS.Hovered.TintColor = FLinearColor(0.30f, 0.92f, 1.0f, 1.0f);
+    BS.Pressed.TintColor = FLinearColor(0.10f, 0.60f, 0.70f, 1.0f);
     ConfirmNameBtn->WidgetStyle = BS;
     UTextBlock* BtnLabel = NewObject<UTextBlock>(this);
     BtnLabel->SetText(FText::FromString(TEXT("进 入 仙 途")));
     BtnLabel->SetFont(FSlateFontInfo(FPaths::EngineContentDir() / TEXT("Slate/Fonts/DroidSansFallback.ttf"), 22));
-    BtnLabel->SetColorAndOpacity(FLinearColor(0.12f, 0.08f, 0.02f, 1.0f));
+    BtnLabel->SetColorAndOpacity(FLinearColor(0.02f, 0.08f, 0.10f, 1.0f));
     BtnLabel->SetJustification(ETextJustify::Center);
     ConfirmNameBtn->SetContent(BtnLabel);
     ConfirmNameBtn->SetPadding(FMargin(50.0f, 12.0f, 50.0f, 12.0f));
@@ -124,7 +130,7 @@ void UEOKeyInputWidget::ShowIdentityState()
 {
     FString Identity = GenerateRandomIdentity();
 
-    IdentityText = MakeText(Identity, 28.0f, FLinearColor(0.95f, 0.85f, 0.55f, 1.0f));
+    IdentityText = MakeText(Identity, 28.0f, FLinearColor(0.30f, 0.90f, 1.0f, 1.0f));
     if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(IdentityText))
     {
         S->SetAnchors(FAnchors(0.5f, 0.4f, 0.5f, 0.4f));
@@ -154,7 +160,7 @@ void UEOKeyInputWidget::ShowIdentityState()
 
 void UEOKeyInputWidget::ShowClassState()
 {
-    UTextBlock* Title = MakeText(TEXT("选择你的修仙之路"), 32.0f, FLinearColor(0.95f, 0.85f, 0.55f, 1.0f));
+    UTextBlock* Title = MakeText(TEXT("选择你的修仙之路"), 32.0f, FLinearColor(0.30f, 0.90f, 1.0f, 1.0f));
     if (UCanvasPanelSlot* S = MainCanvas->AddChildToCanvas(Title))
     {
         S->SetAnchors(FAnchors(0.5f, 0.15f, 0.5f, 0.15f));
@@ -217,12 +223,12 @@ UButton* UEOKeyInputWidget::MakeClassButton(const FString& Name, const FString& 
     UButton* Btn = NewObject<UButton>(this);
     FButtonStyle BS = Btn->WidgetStyle;
     BS.Normal.TintColor = FLinearColor(0.08f, 0.10f, 0.18f, 0.9f);
-    BS.Hovered.TintColor = FLinearColor(0.83f, 0.69f, 0.22f, 0.5f);
+    BS.Hovered.TintColor = FLinearColor(0.15f, 0.75f, 0.85f, 0.5f);
     BS.Pressed.TintColor = FLinearColor(0.12f, 0.15f, 0.25f, 1.0f);
     Btn->WidgetStyle = BS;
 
     UVerticalBox* VBox = NewObject<UVerticalBox>(this);
-    UTextBlock* NameText = MakeText(Name, 26.0f, FLinearColor(0.95f, 0.85f, 0.55f, 1.0f));
+    UTextBlock* NameText = MakeText(Name, 26.0f, FLinearColor(0.30f, 0.90f, 1.0f, 1.0f));
     if (UVerticalBoxSlot* NS = VBox->AddChildToVerticalBox(NameText))
     {
         NS->SetHorizontalAlignment(HAlign_Center);

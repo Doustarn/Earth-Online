@@ -49,7 +49,7 @@ protected:
 
     // State 2: 职业选择
     UTextBlock* ClassTitle;
-    UVerticalBox* ClassRow;
+    class UHorizontalBox* ClassRow;
     TArray<UButton*> ClassButtons;
     TArray<UTextBlock*> ClassDescs;
 
